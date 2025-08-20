@@ -1,0 +1,18 @@
+const { contextBridge, ipcRenderer } = require('electron');
+
+
+contextBridge.exposeInMainWorld('electronAPI', {
+    createClientFolder: (clientName) => ipcRenderer.invoke('create-client-folder', clientName),
+    openClientFolder: (clientName) => ipcRenderer.invoke('open-client-folder', clientName),
+    createLegalLibraryFolder: (folderName) => ipcRenderer.invoke('create-legal-library-folder', folderName),
+    openLegalLibraryMainFolder: () => ipcRenderer.invoke('open-legal-library-main-folder'),
+    loadLegalLibraryFolders: () => ipcRenderer.invoke('load-legal-library-folders'),
+    openLegalLibraryFolder: (folderName) => ipcRenderer.invoke('open-legal-library-folder', folderName),
+    deleteLegalLibraryFolder: (folderName) => ipcRenderer.invoke('delete-legal-library-folder', folderName),
+    renameLegalLibraryFolder: (oldName, newName) => ipcRenderer.invoke('rename-legal-library-folder', oldName, newName),
+    attachFilesToFolder: (folderName) => ipcRenderer.invoke('attach-files-to-folder', folderName),
+    openDownloadSite: (siteNumber) => ipcRenderer.invoke('open-download-site', siteNumber),
+    
+
+    onOpenWebsiteTab: (callback) => ipcRenderer.on('open-website-tab', callback)
+});
