@@ -45,7 +45,7 @@ function displayExpertSessionForm(sessionId = null) {
                             </div>
                         </div>
                         
-                        <!-- السطر الثاني: نوع الجلسة والحالة -->
+                        <!-- السطر الثاني: نوع الجلس�� والحالة -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- نوع الجلسة -->
                             <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-purple-300 transition-colors">
@@ -91,21 +91,13 @@ function displayExpertSessionForm(sessionId = null) {
                             </div>
                         </div>
                         
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-purple-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-map-pin-line text-lg text-purple-500"></i>
-                                    مكان الجلسة
-                                </label>
-                                <input type="text" id="location" name="location" value="${sessionData.location || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="مكان انعقاد الجلسة...">
-                            </div>
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-purple-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-sticky-note-line text-lg text-purple-500"></i>
-                                    ملاحظات
-                                </label>
-                                <input type="text" id="notes" name="notes" value="${sessionData.notes || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="أي ملاحظات إضافية...">
-                            </div>
+                        <!-- الملاحظات -->
+                        <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-purple-300 transition-colors">
+                            <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
+                                <i class="ri-sticky-note-line text-lg text-purple-500"></i>
+                                ملاحظات
+                            </label>
+                            <input type="text" id="notes" name="notes" value="${sessionData.notes || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500" placeholder="أي ملاحظات إضافية...">
                         </div>
                         
                         <!-- أزرار الحفظ والإلغاء -->

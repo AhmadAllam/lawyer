@@ -7,7 +7,7 @@ function getDbInstance() {
 
 function initDB() {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('LawyerAppDB', 15);
+        const request = indexedDB.open('LawyerAppDB', 18);
 
         request.onupgradeneeded = (event) => {
             const dbInstance = event.target.result;
@@ -60,6 +60,57 @@ function initDB() {
                 };
             }
 
+            // حذف الفهارس الغير مستخدمة في الإصدار 16
+            if (event.oldVersion < 16) {
+                // حذف الفهارس الغير مستخدمة من جدول administrative
+                let administrativeStore;
+                if (dbInstance.objectStoreNames.contains('administrative')) {
+                    administrativeStore = transaction.objectStore('administrative');
+                    if (administrativeStore.indexNames.contains('task')) {
+                        administrativeStore.deleteIndex('task');
+                    }
+                    if (administrativeStore.indexNames.contains('location')) {
+                        administrativeStore.deleteIndex('location');
+                    }
+                }
+
+                // حذف الفهارس الغير مستخدمة من جدول clerkPapers
+                let clerkPapersStore;
+                if (dbInstance.objectStoreNames.contains('clerkPapers')) {
+                    clerkPapersStore = transaction.objectStore('clerkPapers');
+                    if (clerkPapersStore.indexNames.contains('clerkOffice')) {
+                        clerkPapersStore.deleteIndex('clerkOffice');
+                    }
+                    if (clerkPapersStore.indexNames.contains('deliveryDate')) {
+                        clerkPapersStore.deleteIndex('deliveryDate');
+                    }
+                    if (clerkPapersStore.indexNames.contains('receiptDate')) {
+                        clerkPapersStore.deleteIndex('receiptDate');
+                    }
+                }
+
+                // حذف الفهرس الغير مستخدم من جدول expertSessions
+                let expertSessionsStore;
+                if (dbInstance.objectStoreNames.contains('expertSessions')) {
+                    expertSessionsStore = transaction.objectStore('expertSessions');
+                    if (expertSessionsStore.indexNames.contains('caseNumber')) {
+                        expertSessionsStore.deleteIndex('caseNumber');
+                    }
+                }
+            }
+
+            // حذف الفهرس الغير مستخدم في الإصدار 17
+            if (event.oldVersion < 17) {
+                // حذف فهرس inventoryNumberYear من جدول sessions
+                let sessionsStoreForCleanup;
+                if (dbInstance.objectStoreNames.contains('sessions')) {
+                    sessionsStoreForCleanup = transaction.objectStore('sessions');
+                    if (sessionsStoreForCleanup.indexNames.contains('inventoryNumberYear')) {
+                        sessionsStoreForCleanup.deleteIndex('inventoryNumberYear');
+                    }
+                }
+            }
+
             let sessionsStore;
             if (dbInstance.objectStoreNames.contains('sessions')) {
                 sessionsStore = transaction.objectStore('sessions');
@@ -70,9 +121,7 @@ function initDB() {
             if (sessionsStore.indexNames.contains('inventoryNumber')) {
                 sessionsStore.deleteIndex('inventoryNumber');
             }
-            if (!sessionsStore.indexNames.contains('inventoryNumberYear')) {
-                sessionsStore.createIndex('inventoryNumberYear', ['inventoryNumber', 'inventoryYear'], { unique: false });
-            }
+            // تم حذف فهرس inventoryNumberYear في الإصدار 17 لأنه غير مستخدم
 
 
             if (!dbInstance.objectStoreNames.contains('accounts')) {
@@ -86,10 +135,8 @@ function initDB() {
             if (!dbInstance.objectStoreNames.contains('administrative')) {
                 const administrativeStore = dbInstance.createObjectStore('administrative', { keyPath: 'id', autoIncrement: true });
                 administrativeStore.createIndex('clientId', 'clientId', { unique: false });
-                administrativeStore.createIndex('task', 'task', { unique: false });
                 administrativeStore.createIndex('dueDate', 'dueDate', { unique: false });
                 administrativeStore.createIndex('completed', 'completed', { unique: false });
-                administrativeStore.createIndex('location', 'location', { unique: false });
             }
 
 
@@ -97,11 +144,8 @@ function initDB() {
                 const clerkPapersStore = dbInstance.createObjectStore('clerkPapers', { keyPath: 'id', autoIncrement: true });
                 clerkPapersStore.createIndex('clientId', 'clientId', { unique: false });
                 clerkPapersStore.createIndex('caseId', 'caseId', { unique: false });
-                clerkPapersStore.createIndex('clerkOffice', 'clerkOffice', { unique: false });
                 clerkPapersStore.createIndex('paperType', 'paperType', { unique: false });
                 clerkPapersStore.createIndex('paperNumber', 'paperNumber', { unique: false });
-                clerkPapersStore.createIndex('deliveryDate', 'deliveryDate', { unique: false });
-                clerkPapersStore.createIndex('receiptDate', 'receiptDate', { unique: false });
                 clerkPapersStore.createIndex('notes', 'notes', { unique: false });
             }
 
@@ -109,7 +153,6 @@ function initDB() {
             if (!dbInstance.objectStoreNames.contains('expertSessions')) {
                 const expertSessionsStore = dbInstance.createObjectStore('expertSessions', { keyPath: 'id', autoIncrement: true });
                 expertSessionsStore.createIndex('clientId', 'clientId', { unique: false });
-                expertSessionsStore.createIndex('caseNumber', 'caseNumber', { unique: false });
                 expertSessionsStore.createIndex('outgoingNumber', 'outgoingNumber', { unique: false });
                 expertSessionsStore.createIndex('incomingNumber', 'incomingNumber', { unique: false });
                 expertSessionsStore.createIndex('sessionDate', 'sessionDate', { unique: false });

@@ -162,33 +162,144 @@ async function handleAddSampleData() {
 
 
 async function handleDeleteAllData() {
+    const confirmation = confirm('هل أنت متأكد من حذف جميع البيانات؟ سيتم حذف جميع الموكلين والقضايا والجلسات والحسابات نهائياً!');
+    if (!confirmation) return;
+
     try {
-        const db = getDbInstance();
-        if (db) {
-            db.close();
+                
+        // محاولة الطريقة الأولى: حذف البيانا�� من كل جدول
+        const success = await clearAllDataFromTables();
+        
+        if (success) {
+            showToast('تم حذف جميع البيانات بنجاح ✅');
+            if (typeof updateCountersInHeader === 'function') {
+                await updateCountersInHeader();
+            }
+            
+            // إعادة تحميل الصفحة بعد ثانية واحدة
+            setTimeout(() => {
+                window.location.reload();
+            }, 1500);
+            return;
+        }
+        
+        // إذا فشلت الطريقة الأولى، نجرب حذف قاعدة البيانات كاملة
+        await deleteEntireDatabase();
+        
+    } catch (error) {
+        console.error('Error in handleDeleteAllData:', error);
+        showToast('فشل حذف البيانات: ' + error.message, 'error');
+        
+        // في حالة فشل كل شيء، إعادة تحميل الصفحة
+        setTimeout(() => {
+            window.location.reload();
+        }, 3000);
+    }
+}
+
+// دالة لحذف البيانات من كل جدول على حدة
+async function clearAllDataFromTables() {
+    try {
+        const dbInstance = getDbInstance();
+        if (!dbInstance) {
+            throw new Error('قاعدة البيانات غير متاحة');
         }
 
-        const deleteRequest = indexedDB.deleteDatabase('LawyerAppDB');
-
-        deleteRequest.onsuccess = async () => {
-            await initDB();
-            await updateCountersInHeader();
-            closeModal();
-            showToast('تم حذف جميع البيانات وإعادة تهيئة القاعدة بنجاح.');
-        };
-
-        deleteRequest.onerror = (event) => {
-            showToast('حدث خطأ أثناء حذف قاعدة البيانات.');
-            initDB();
-        };
+        const storeNames = ['clients', 'opponents', 'cases', 'sessions', 'accounts', 'administrative', 'clerkPapers', 'expertSessions', 'settings'];
         
-        deleteRequest.onblocked = () => {
-            showToast('لا يمكن حذف القاعدة. يرجى إغلاق جميع نوافذ التطبيق والمحاولة مرة أخرى.');
-        };
-
+                
+        for (const storeName of storeNames) {
+            try {
+                await clearStore(storeName);
+                console.log(`تم حذف بيانات جدول ${storeName}`);
+            } catch (error) {
+                console.warn(`تعذر حذف جدول ${storeName}:`, error);
+                // نتجاهل الأخطاء ونكمل مع الجداول الأخرى
+            }
+        }
+        
+        // إضافة الإعدادات الافتراضية مرة أخرى
+        try {
+            await setSetting('officeName', 'محامين مصر الرقمية');
+        } catch (error) {
+            console.warn('تعذر إضافة الإعدادات الافتراضية:', error);
+        }
+        
+        return true;
     } catch (error) {
-        showToast('فشل حذف البيانات.');
+        console.error('فشل في حذف البيانات من الجداول:', error);
+        return false;
     }
+}
+
+// دالة لحذف قاعدة البيانات بالكامل
+async function deleteEntireDatabase() {
+    return new Promise((resolve, reject) => {
+        // إغلاق قاعدة البيانات بشكل قوي
+        const dbInstance = getDbInstance();
+        if (dbInstance) {
+            dbInstance.close();
+        }
+        
+        // انتظار قصير للتأكد من إغلاق الاتصالات
+        setTimeout(() => {
+            const deleteRequest = indexedDB.deleteDatabase('LawyerAppDB');
+            
+            // مهلة زمنية للحذف (5 ثواني)
+            const timeout = setTimeout(() => {
+                window.location.reload();
+            }, 5000);
+
+            deleteRequest.onsuccess = async () => {
+                clearTimeout(timeout);
+                try {
+                    // انتظار قصير قبل إعادة التهيئة
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                    
+                    await initDB();
+                    if (typeof updateCountersInHeader === 'function') {
+                        await updateCountersInHeader();
+                    }
+                    
+                    showToast('تم حذف جميع البيانات بنجاح ✅');
+                    
+                    // إعادة تحميل الصفحة بعد ثانية واحدة
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                    
+                    resolve();
+                } catch (error) {
+                    console.error('Error reinitializing database:', error);
+                    showToast('تم حذف جميع البيانات بنجاح ✅');
+                    // إعادة تحميل الصفحة في كل الأحوال
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                    resolve();
+                }
+            };
+
+            deleteRequest.onerror = (event) => {
+                clearTimeout(timeout);
+                console.error('Error deleting database:', event);
+                showToast('فشل حذف البيانات', 'error');
+                // إعادة تحميل الصفحة كحل أخير
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+                reject(event);
+            };
+            
+            deleteRequest.onblocked = () => {
+                clearTimeout(timeout);
+                // إعادة تحميل الصفحة فوراً
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1000);
+            };
+        }, 200);
+    });
 }
 
 
@@ -444,20 +555,26 @@ async function restoreBackup(backupData) {
 // دالة مساعدة لحذف جميع البيانات من جدول معين
 async function clearStore(storeName) {
     return new Promise((resolve, reject) => {
-        const db = getDbInstance();
-        if (!db) {
+        const dbInstance = getDbInstance();
+        if (!dbInstance) {
             reject(new Error('قاعدة البيانات غير متاحة'));
             return;
         }
         
-        const transaction = db.transaction([storeName], 'readwrite');
-        const store = transaction.objectStore(storeName);
-        const clearRequest = store.clear();
-        
-        clearRequest.onsuccess = () => resolve();
-        clearRequest.onerror = () => reject(clearRequest.error);
-        
-        transaction.onerror = () => reject(transaction.error);
+        try {
+            const transaction = dbInstance.transaction([storeName], 'readwrite');
+            const store = transaction.objectStore(storeName);
+            const clearRequest = store.clear();
+            
+            clearRequest.onsuccess = () => resolve();
+            clearRequest.onerror = () => reject(clearRequest.error);
+            
+            transaction.onerror = () => reject(transaction.error);
+        } catch (error) {
+            // إذا كان الجدول غير موجود، نتجاهل الخطأ
+            console.warn(`Table ${storeName} not found, skipping...`);
+            resolve();
+        }
     });
 }
 
@@ -472,13 +589,20 @@ function readFileAsText(file) {
 
 function getAllRecords(storeName) {
     return new Promise((resolve, reject) => {
-        if (!db) return reject("DB not initialized");
+        const dbInstance = getDbInstance();
+        if (!dbInstance) return reject("DB not initialized");
         
-        const transaction = db.transaction([storeName], 'readonly');
-        const store = transaction.objectStore(storeName);
-        const request = store.getAll();
-        
-        request.onsuccess = () => resolve(request.result);
-        request.onerror = () => reject(request.error);
+        try {
+            const transaction = dbInstance.transaction([storeName], 'readonly');
+            const store = transaction.objectStore(storeName);
+            const request = store.getAll();
+            
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = () => reject(request.error);
+        } catch (error) {
+            // إذا كان الجدول غير موجود، نرجع مصفوفة فارغة
+            console.warn(`Table ${storeName} not found, returning empty array`);
+            resolve([]);
+        }
     });
 }

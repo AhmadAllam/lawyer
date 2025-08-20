@@ -142,7 +142,7 @@ function generateAdministrativeReportHTML(administrative, clients, sortOrder = '
         }
         
         // تحديد نص المهمة
-        const taskText = work.workType || work.description || 'مهمة إدارية';
+        const taskText = work.description || 'مهمة إدارية';
         
         tableRows += `
             <tr class="${rowClass} border-b border-gray-200 hover:bg-gradient-to-l hover:from-indigo-100 hover:to-blue-100 transition-all duration-300 hover:shadow-sm">
@@ -309,8 +309,6 @@ async function toggleAdministrativeFilter() {
     }
 }
 
-
-
 // تصفية تقرير الأعمال الإدارية
 function filterAdministrativeReport(searchTerm, administrative, clients) {
     if (!searchTerm.trim()) {
@@ -324,14 +322,12 @@ function filterAdministrativeReport(searchTerm, administrative, clients) {
     const filteredAdministrative = administrative.filter(work => {
         const client = work.clientId ? clients.find(c => c.id === work.clientId) : null;
         const clientName = client ? client.name.toLowerCase() : 'عام';
-        const workType = work.workType ? work.workType.toLowerCase() : '';
         const description = work.description ? work.description.toLowerCase() : '';
         const notes = work.notes ? work.notes.toLowerCase() : '';
         
         const searchLower = searchTerm.toLowerCase();
         
         return clientName.includes(searchLower) || 
-               workType.includes(searchLower) || 
                description.includes(searchLower) || 
                notes.includes(searchLower);
     });
@@ -714,7 +710,7 @@ async function exportAdministrativeReport() {
         
         // إضافة البيانات
         filteredAdministrative.forEach((work) => {
-            const taskText = work.workType || work.description || 'مهمة إدارية';
+            const taskText = work.description || 'مهمة إدارية';
             const status = work.completed ? 'مكتمل' : 'قيد التنفيذ';
             const dueDate = work.dueDate ? new Date(work.dueDate).toLocaleDateString('ar-EG') : '-';
             const notes = work.notes || '-';
