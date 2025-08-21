@@ -50,23 +50,24 @@ async function displayClientViewForm(clientId) {
                                 <span>بيانات الموكل</span>
                             </h3>
                             <div class="space-y-4 flex-1">
-                                <div class="text-center">
-                                    <div class="text-sm text-gray-600 mb-1">اسم الموكل</div>
-                                    <div class="font-bold text-lg text-gray-800 bg-white p-3 rounded-lg border">${client.name || 'فارغ'}</div>
+                                <div class="inline-flex w-full items-stretch">
+                                    <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">اسم الموكل</div>
+                                    <div class="flex-1 font-bold text-lg text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.name || 'فارغ'}</div>
                                 </div>
-                                <div class="text-center">
-                                    <div class="text-sm text-gray-600 mb-1">صفته</div>
-                                    <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">${client.capacity || 'فارغ'}</div>
+                                <div class="inline-flex w-full items-stretch">
+                                    <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">صفته</div>
+                                    <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.capacity || 'فارغ'}</div>
                                 </div>
-                                <div class="text-center">
-                                    <div class="text-sm text-gray-600 mb-1">عنوانه</div>
-                                    <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">${client.address || 'فارغ'}</div>
+                                <div class="inline-flex w-full items-stretch">
+                                    <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">عنوانه</div>
+                                    <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.address || 'فارغ'}</div>
                                 </div>
-                                <div class="text-center">
-                                    <div class="text-sm text-gray-600 mb-1">الهاتف</div>
-                                    <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">${client.phone || 'فارغ'}</div>
+                                <div class="inline-flex w-full items-stretch">
+                                    <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">الهاتف</div>
+                                    <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.phone || 'فارغ'}</div>
                                 </div>
                             </div>
+                            
                             <div class="mt-6 text-center">
                                 <button id="edit-client-data-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105" data-client-id="${clientId}">
                                     <i class="ri-edit-line mr-2"></i>تعديل
@@ -88,46 +89,47 @@ async function displayClientViewForm(clientId) {
                                 <span>بيانات الخصوم</span>
                             </h3>
                             ${opponents.length === 0 ? `
-                                <div class="space-y-4 flex-1">
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">اسم الخصم</div>
-                                        <div class="font-bold text-lg text-gray-800 bg-white p-3 rounded-lg border">فارغ</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">صفته</div>
-                                        <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">فارغ</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">عنوانه</div>
-                                        <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">فارغ</div>
-                                    </div>
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">الهاتف</div>
-                                        <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">فارغ</div>
-                                    </div>
-                                </div>
-                                <div class="mt-6 text-center">
-                                    <button class="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
-                                        <i class="ri-edit-line mr-2"></i>تعديل
-                                    </button>
-                                </div>
+                            <div class="space-y-4 flex-1">
+                            <div class="inline-flex w-full items-stretch">
+                            <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">اسم الخصم</div>
+                            <div class="flex-1 font-bold text-lg text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
+                            </div>
+                            <div class="inline-flex w-full items-stretch">
+                            <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">صفته</div>
+                            <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
+                            </div>
+                            <div class="inline-flex w-full items-stretch">
+                            <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">عنوانه</div>
+                            <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
+                            </div>
+                            <div class="inline-flex w-full items-stretch">
+                            <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">الهاتف</div>
+                            <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
+                            </div>
+                            </div>
+                            <div class="mt-6 text-center">
+                            <button class="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
+                            <i class="ri-edit-line mr-2"></i>تعديل
+                            </button>
+                            </div>
                             ` : `
+                            
                                 <div class="space-y-4 flex-1">
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">اسم الخصم</div>
-                                        <div class="font-bold text-lg text-gray-800 bg-white p-3 rounded-lg border">${opponents[0]?.name || 'فارغ'}</div>
+                                    <div class="inline-flex w-full items-stretch">
+                                        <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">اسم الخصم</div>
+                                        <div id="opponent-name-value" class="flex-1 font-bold text-lg text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.name || 'فارغ'}</div>
                                     </div>
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">صفته</div>
-                                        <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">${opponents[0]?.capacity || 'فارغ'}</div>
+                                    <div class="inline-flex w-full items-stretch">
+                                        <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">صفته</div>
+                                        <div id="opponent-capacity-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.capacity || 'فارغ'}</div>
                                     </div>
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">عنوانه</div>
-                                        <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">${opponents[0]?.address || 'فارغ'}</div>
+                                    <div class="inline-flex w-full items-stretch">
+                                        <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">عنوانه</div>
+                                        <div id="opponent-address-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.address || 'فارغ'}</div>
                                     </div>
-                                    <div class="text-center">
-                                        <div class="text-sm text-gray-600 mb-1">الهاتف</div>
-                                        <div class="font-medium text-gray-800 bg-white p-3 rounded-lg border">${opponents[0]?.phone || 'فارغ'}</div>
+                                    <div class="inline-flex w-full items-stretch">
+                                        <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">الهاتف</div>
+                                        <div id="opponent-phone-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.phone || 'فارغ'}</div>
                                     </div>
                                 </div>
                                 <div class="mt-6 text-center">
@@ -462,35 +464,25 @@ let currentOpponentIndex = 0;
 // دالة تحديث عرض الخصم الحالي
 function updateOpponentDisplay(opponents) {
     if (opponents.length === 0) return;
-    
     const currentOpponent = opponents[currentOpponentIndex];
-    
-    // تحديث البيانات باستخدام selectors أكثر دقة
-    const opponentSection = document.querySelector('.bg-red-50\\/50');
-    if (!opponentSection) return;
-    
-    const dataFields = opponentSection.querySelectorAll('.space-y-4 .text-center .font-bold, .space-y-4 .text-center .font-medium');
-    
-    if (dataFields.length >= 4) {
-        dataFields[0].textContent = currentOpponent.name || 'فارغ';
-        dataFields[1].textContent = currentOpponent.capacity || 'فارغ';
-        dataFields[2].textContent = currentOpponent.address || 'فارغ';
-        dataFields[3].textContent = currentOpponent.phone || 'فارغ';
-    }
-    
-    // تحديث زر التعديل
+    const nameEl = document.getElementById('opponent-name-value');
+    const capacityEl = document.getElementById('opponent-capacity-value');
+    const addressEl = document.getElementById('opponent-address-value');
+    const phoneEl = document.getElementById('opponent-phone-value');
+    if (nameEl) nameEl.textContent = currentOpponent.name || 'فارغ';
+    if (capacityEl) capacityEl.textContent = currentOpponent.capacity || 'فارغ';
+    if (addressEl) addressEl.textContent = currentOpponent.address || 'فارغ';
+    if (phoneEl) phoneEl.textContent = currentOpponent.phone || 'فارغ';
     const editBtn = document.querySelector('.edit-opponent-btn');
     if (editBtn) {
         editBtn.setAttribute('data-opponent-id', currentOpponent.id);
     }
-    
-    // تحديث المؤشر
     const indexSpan = document.getElementById('current-opponent-index');
     if (indexSpan) {
         indexSpan.textContent = currentOpponentIndex + 1;
     }
 }
-
+ 
 // إضافة مستمعي الأحداث للموكل
 function attachClientViewListeners(clientId, opponents) {
     // زر تعديل بيانات الموكل

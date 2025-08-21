@@ -1,6 +1,6 @@
 const menuItems = [
-    { id: 'new', label: 'جديد', icon: 'ri-add-circle-line', color: 'blue', description: 'إضافة قضية جديدة' },
-    { id: 'search', label: 'البحث', icon: 'ri-search-2-line', color: 'yellow', description: 'البحث في القضايا' },
+    { id: 'new', label: 'موكل جديد', icon: 'ri-add-circle-line', color: 'blue', description: 'إضافة قضية جديدة' },
+    { id: 'search', label: 'البحث والتعديل', icon: 'ri-search-2-line', color: 'yellow', description: 'البحث في القضايا' },
     { id: 'sessions', label: 'الجلسات', icon: 'ri-calendar-event-line', color: 'green', description: 'إدارة الجلسات' },
     { id: 'administrative', label: 'الأعمال الإدارية', icon: 'ri-briefcase-line', color: 'purple', description: 'المهام الإدارية' },
     { id: 'accounts', label: 'الحسابات', icon: 'ri-wallet-3-line', color: 'blue', description: 'إدارة الحسابات' },

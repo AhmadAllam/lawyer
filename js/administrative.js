@@ -773,84 +773,18 @@ async function displayAdministrativeForm(workId = null) {
         
         // توسيع النافذة لملء الشاشة
         modalContainer.classList.remove('max-w-5xl', 'max-w-7xl', 'mx-4', 'w-full');
-        modalContainer.classList.add('w-full', 'h-full');
+        modalContainer.classList.add('w-full', 'h-screen');
         modalContent.classList.remove('px-4', 'pb-4');
         modalContent.classList.add('p-6', 'h-full', 'overflow-y-auto');
         
         modalContent.innerHTML = `
             <div class="w-full h-full p-4">
-                <div class="w-full mx-auto">
-                    <form id="administrative-form" class="space-y-4">
-                        <!-- السطر الأول: الموكل والعمل المطلوب -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <!-- الموكل -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-user-line text-lg text-indigo-500"></i>
-                                    الموكل
-                                </label>
-                                <select id="client-select" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">عمل عام (بدون موكل محدد)</option>
-                                    ${clients.map(client => `
-                                        <option value="${client.id}" ${work && work.clientId === client.id ? 'selected' : ''}>
-                                            ${client.name}
-                                        </option>
-                                    `).join('')}
-                                </select>
-                            </div>
-                            
-                            <!-- العمل المطلوب -->
-                            <div class="bg-gradient-to-r from-indigo-50 to-purple-50 p-4 rounded-lg border-2 border-indigo-200">
-                                <label class="block text-base font-bold text-indigo-800 mb-2 flex items-center gap-2">
-                                    <i class="ri-briefcase-line text-lg"></i>
-                                    العمل المطلوب *
-                                </label>
-                                <input type="text" id="task" class="w-full p-3 text-base border-2 border-indigo-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-medium" 
-                                       value="${work ? work.task || '' : ''}" placeholder="اكتب وصف العمل المطلوب..." required>
-                            </div>
-                        </div>
-                        
-                        <!-- السطر الثاني: تاريخ الإنجاز ومكان العمل -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <!-- تاريخ الإنجاز -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-calendar-line text-lg text-indigo-500"></i>
-                                    تاريخ الإنجاز *
-                                </label>
-                                <input type="date" id="due-date" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                       value="${work ? work.dueDate || '' : ''}" required>
-                            </div>
-                            
-                            <!-- مكان العمل -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-map-pin-line text-lg text-indigo-500"></i>
-                                    مكان العمل
-                                </label>
-                                <input type="text" id="location" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                       value="${work ? work.location || '' : ''}" placeholder="مكان إتمام العمل...">
-                            </div>
-                        </div>
-                        
-                        <!-- السطر الثالث: الملاحظات وحالة العمل -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-                            <!-- الملاحظات -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-file-text-line text-lg text-indigo-500"></i>
-                                    ملاحظات
-                                </label>
-                                <input type="text" id="notes" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" 
-                                       value="${work ? work.notes || '' : ''}" placeholder="أي ملاحظات إضافية...">
-                            </div>
-                            
-                            <!-- حالة العمل -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-indigo-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-settings-line text-lg text-indigo-500"></i>
-                                    حالة العمل
-                                </label>
+                <div class="w-full h-full mx-auto">
+                    <form id="administrative-form" class="space-y-4 flex flex-col min-h-full">
+                        <!-- حالة العمل أعلى الشاشة -->
+                        <div class="w-full flex justify-center">
+                            <div class="bg-white border-2 border-gray-300 rounded-xl p-4 shadow-sm max-w-md w-full">
+                                <label class="block text-base font-bold text-gray-700 mb-2 text-center">حالة العمل</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <label class="flex items-center justify-center gap-1 cursor-pointer bg-gray-50 p-3 rounded-lg border border-red-200 hover:border-red-400 hover:bg-red-50 transition-all ${!work || !work.completed ? 'ring-2 ring-red-400 bg-red-50' : ''}">
                                         <input type="radio" name="completed" value="false" class="w-4 h-4 text-red-600 focus:ring-red-500" 
@@ -867,17 +801,82 @@ async function displayAdministrativeForm(workId = null) {
                                 </div>
                             </div>
                         </div>
+                        <!-- السطر الأول: الموكل والعمل المطلوب -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- العمل المطلوب -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="task" class="px-3 py-2 border-2 border-indigo-300 bg-indigo-50 text-sm font-bold text-indigo-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">العمل المطلوب</label>
+                                    <input type="text" id="task" class="flex-1 px-4 py-3 text-base bg-white border-2 border-indigo-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-medium -mr-px" 
+                                           value="${work ? work.task || '' : ''}" placeholder="اكتب وصف العمل المطلوب..." required>
+                                </div>
+                            </div>
+                            
+                            <!-- الموكل -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <select id="client-select" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 -mr-px">
+                                        <option value="">عمل عام (بدون موكل محدد)</option>
+                                        ${clients.map(client => `
+                                            <option value="${client.id}" ${work && work.clientId === client.id ? 'selected' : ''}>
+                                                ${client.name}
+                                            </option>
+                                        `).join('')}
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- السطر الثاني: تاريخ الإنجاز ومكان العمل -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- تاريخ الإنجاز -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="due-date" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">تاريخ الإنجاز</label>
+                                    <input type="date" id="due-date" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 -mr-px"
+                                           value="${work ? work.dueDate || '' : ''}" required>
+                                </div>
+                            </div>
+                            
+                            <!-- مكان العمل -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="location" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">مكان العمل</label>
+                                    <input type="text" id="location" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 -mr-px"
+                                           value="${work ? work.location || '' : ''}" placeholder="مكان إتمام العمل...">
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- السطر الثالث: الملاحظات -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- الملاحظات -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="notes" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">ملاحظات</label>
+                                    <input type="text" id="notes" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 -mr-px" 
+                                           value="${work ? work.notes || '' : ''}" placeholder="أي ملاحظات إضافية...">
+                                </div>
+                            </div>
+                        </div>
                         
                         <!-- أزرار الحفظ والإلغاء -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                            <button type="submit" class="px-6 py-3 text-base bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
-                                <i class="ri-save-line text-lg"></i>
-                                ${isEdit ? 'تحديث العمل' : 'حفظ العمل'}
-                            </button>
-                            <button type="button" id="cancel-administrative-btn" class="px-6 py-3 text-base bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
-                                <i class="ri-close-line text-lg"></i>
-                                إلغاء
-                            </button>
+                        <div class="mt-auto pt-4">
+                            <div class="sticky bottom-0 left-0 right-0 z-10 bg-gray-50 border-t border-gray-200 py-3">
+                                <div class="flex justify-center">
+                                    <div class="bg-white border border-gray-300 rounded-md px-3 py-2 shadow-sm flex items-center gap-2">
+                                        <button type="submit" class="w-auto px-4 py-2 text-sm bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-md font-semibold shadow-sm flex items-center justify-center gap-1">
+                                            <i class="ri-save-line text-base"></i>
+                                            ${isEdit ? 'تحديث العمل' : 'حفظ العمل'}
+                                        </button>
+                                        <button type="button" id="cancel-administrative-btn" class="w-auto px-4 py-2 text-sm bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-md font-semibold shadow-sm flex items-center justify-center gap-1">
+                                            <i class="ri-close-line text-base"></i>
+                                            إلغاء
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

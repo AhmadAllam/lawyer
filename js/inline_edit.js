@@ -23,39 +23,43 @@ async function displayEditClientFormInline(clientId) {
                     <!-- الحقول في شبكة -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white/95 backdrop-blur-sm rounded-xl border border-blue-200 shadow-md">
                         <div>
-                            <label for="client-name" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-user-line text-blue-600 ml-2"></i>
-                                اسم الموكل
-                            </label>
-                            <input type="text" id="client-name" name="name" value="${client.name || ''}" required 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-blue-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="client-name" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-blue-50 border-2 border-blue-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    اسم الموكل
+                                </label>
+                                <input type="text" id="client-name" name="name" value="${client.name || ''}" required 
+                                       class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                         
                         <div>
-                            <label for="client-capacity" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-briefcase-line text-green-600 ml-2"></i>
-                                صفته
-                            </label>
-                            <input type="text" id="client-capacity" name="capacity" value="${client.capacity || ''}" 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-blue-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="client-capacity" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-blue-50 border-2 border-blue-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    صفته
+                                </label>
+                                <input type="text" id="client-capacity" name="capacity" value="${client.capacity || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                         
                         <div>
-                            <label for="client-address" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-map-pin-line text-red-600 ml-2"></i>
-                                عنوانه
-                            </label>
-                            <input type="text" id="client-address" name="address" value="${client.address || ''}" 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-blue-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="client-address" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-blue-50 border-2 border-blue-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    عنوانه
+                                </label>
+                                <input type="text" id="client-address" name="address" value="${client.address || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                         
                         <div>
-                            <label for="client-phone" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-phone-line text-purple-600 ml-2"></i>
-                                الهاتف
-                            </label>
-                            <input type="text" id="client-phone" name="phone" value="${client.phone || ''}" 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-blue-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="client-phone" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-blue-50 border-2 border-blue-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    الهاتف
+                                </label>
+                                <input type="text" id="client-phone" name="phone" value="${client.phone || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                     </div>
                     
@@ -131,39 +135,43 @@ async function displayEditOpponentFormInline(opponentId) {
                     <!-- الحقول في شبكة -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 p-6 bg-white/95 backdrop-blur-sm rounded-xl border border-red-200 shadow-md">
                         <div>
-                            <label for="opponent-name" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-shield-user-line text-red-600 ml-2"></i>
-                                اسم الخصم
-                            </label>
-                            <input type="text" id="opponent-name" name="name" value="${opponent.name || ''}" required 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-red-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="opponent-name" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-red-50 border-2 border-red-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    اسم الخصم
+                                </label>
+                                <input type="text" id="opponent-name" name="name" value="${opponent.name || ''}" required 
+                                       class="flex-1 p-3 bg-white border-2 border-red-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                         
                         <div>
-                            <label for="opponent-capacity" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-briefcase-line text-green-600 ml-2"></i>
-                                صفته
-                            </label>
-                            <input type="text" id="opponent-capacity" name="capacity" value="${opponent.capacity || ''}" 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-red-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="opponent-capacity" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-red-50 border-2 border-red-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    صفته
+                                </label>
+                                <input type="text" id="opponent-capacity" name="capacity" value="${opponent.capacity || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-red-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                         
                         <div>
-                            <label for="opponent-address" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-map-pin-line text-blue-600 ml-2"></i>
-                                عنوانه
-                            </label>
-                            <input type="text" id="opponent-address" name="address" value="${opponent.address || ''}" 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-red-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="opponent-address" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-red-50 border-2 border-red-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    عنوانه
+                                </label>
+                                <input type="text" id="opponent-address" name="address" value="${opponent.address || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-red-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                         
                         <div>
-                            <label for="opponent-phone" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                                <i class="ri-phone-line text-purple-600 ml-2"></i>
-                                الهاتف
-                            </label>
-                            <input type="text" id="opponent-phone" name="phone" value="${opponent.phone || ''}" 
-                                   class="mt-1 block w-full p-3 bg-white border-2 border-red-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="opponent-phone" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-red-50 border-2 border-red-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    الهاتف
+                                </label>
+                                <input type="text" id="opponent-phone" name="phone" value="${opponent.phone || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-red-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
                         </div>
                     </div>
                     

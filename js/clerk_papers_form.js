@@ -20,99 +20,99 @@ function displayClerkPaperForm(paperId = null) {
                 <div class="w-full mx-auto">
                     <form id="clerk-paper-form" class="space-y-3">
                         <!-- السطر الأول: الموكل ونوع الورقة -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- الموكل -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-user-line text-lg text-blue-500"></i>
-                                    الموكل *
-                                </label>
-                                <select id="client-select" name="clientId" required class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
-                                    <option value="">اختر الموكل</option>
-                                    ${clients.map(client => `
-                                        <option value="${client.id}" ${paperData.clientId === client.id ? 'selected' : ''}>${client.name}</option>
-                                    `).join('')}
-                                </select>
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <select id="client-select" name="clientId" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 -mr-px">
+                                        <option value="">اختر الموكل</option>
+                                        ${clients.map(client => `
+                                            <option value="${client.id}" ${paperData.clientId === client.id ? 'selected' : ''}>${client.name}</option>
+                                        `).join('')}
+                                    </select>
+                                </div>
                             </div>
                             
                             <!-- نوع الورقة -->
-                            <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border-2 border-blue-200">
-                                <label class="block text-base font-bold text-blue-800 mb-2 flex items-center gap-2">
-                                    <i class="ri-file-paper-line text-lg"></i>
-                                    نوع الورقة *
-                                </label>
-                                <select id="paper-type" name="paperType" required class="w-full p-3 text-base border-2 border-blue-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium">
-                                    <option value="">اختر نوع الورقة</option>
-                                    <option value="إنذار" ${paperData.paperType === 'إنذار' ? 'selected' : ''}>إنذار</option>
-                                    <option value="إعلان" ${paperData.paperType === 'إعلان' ? 'selected' : ''}>إعلان</option>
-                                    <option value="أخرى" ${paperData.paperType === 'أخرى' ? 'selected' : ''}>أخرى</option>
-                                </select>
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="paper-type" class="px-3 py-2 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-blue-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الورقة</label>
+                                    <select id="paper-type" name="paperType" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-blue-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium -mr-px">
+                                        <option value="">اختر نوع الورقة</option>
+                                        <option value="إنذار" ${paperData.paperType === 'إنذار' ? 'selected' : ''}>إنذار</option>
+                                        <option value="إعلان" ${paperData.paperType === 'إعلان' ? 'selected' : ''}>إعلان</option>
+                                        <option value="أخرى" ${paperData.paperType === 'أخرى' ? 'selected' : ''}>أخرى</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- السطر الثاني: رقم الورقة وقلم المحضرين -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- رقم الورقة -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-hashtag text-lg text-blue-500"></i>
-                                    رقم الورقة *
-                                </label>
-                                <input type="text" id="paper-number" name="paperNumber" value="${paperData.paperNumber || ''}" required class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="paper-number" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الورقة</label>
+                                    <input type="text" id="paper-number" name="paperNumber" value="${paperData.paperNumber || ''}" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 -mr-px">
+                                </div>
                             </div>
                             
                             <!-- قلم المحضرين -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-building-line text-lg text-blue-500"></i>
-                                    قلم المحضرين
-                                </label>
-                                <input type="text" id="clerk-office" name="clerkOffice" value="${paperData.clerkOffice || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="clerk-office" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">قلم المحضرين</label>
+                                    <input type="text" id="clerk-office" name="clerkOffice" value="${paperData.clerkOffice || ''}" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 -mr-px">
+                                </div>
                             </div>
                         </div>
                         
-                        <!-- السطر الثالث: تاريخ التسليم وتاريخ الاستلام -->
+                        <!-- السطر الثالث: تاريخ التسليم وتا��يخ الاستلام -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- تاريخ التسليم -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-calendar-line text-lg text-blue-500"></i>
-                                    تاريخ تسليم الورقة
-                                </label>
-                                <input type="date" id="delivery-date" name="deliveryDate" value="${paperData.deliveryDate || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right">
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="delivery-date" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">تاريخ التسليم</label>
+                                    <input type="date" id="delivery-date" name="deliveryDate" value="${paperData.deliveryDate || ''}" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right -mr-px">
+                                </div>
                             </div>
                             
                             <!-- تاريخ الاستلام -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-calendar-check-line text-lg text-blue-500"></i>
-                                    تاريخ استلام الورقة
-                                </label>
-                                <input type="date" id="receipt-date" name="receiptDate" value="${paperData.receiptDate || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right">
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="receipt-date" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">تاريخ الاستلام</label>
+                                    <input type="date" id="receipt-date" name="receiptDate" value="${paperData.receiptDate || ''}" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right -mr-px">
+                                </div>
                             </div>
                         </div>
                         
                         <!-- السطر الرابع: الملاحظات -->
-                        <div class="grid grid-cols-1 gap-4">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-blue-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-sticky-note-line text-lg text-blue-500"></i>
-                                    ملاحظات
-                                </label>
-                                <input type="text" id="notes" name="notes" value="${paperData.notes || ''}" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="أي ملاحظات إضافية...">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- الملاحظات -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="notes" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">ملاحظات</label>
+                                    <input type="text" id="notes" name="notes" value="${paperData.notes || ''}" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 -mr-px" placeholder="أي ملاحظات إضافية...">
+                                </div>
                             </div>
                         </div>
                         
                         <!-- أزرار الحفظ والإلغاء -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                            <button type="submit" class="px-6 py-3 text-base bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
-                                <i class="ri-save-line text-lg"></i>
-                                ${paperId ? 'تحديث الورقة' : 'حفظ الورقة'}
-                            </button>
-                            <button type="button" id="cancel-paper-btn" class="px-6 py-3 text-base bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
-                                <i class="ri-close-line text-lg"></i>
-                                إلغاء
-                            </button>
+                        <div class="mt-auto pt-4">
+                            <div class="sticky bottom-0 left-0 right-0 z-10 bg-gray-50 border-t border-gray-200 py-3">
+                                <div class="flex justify-center">
+                                    <div class="bg-white border border-gray-300 rounded-md px-3 py-2 shadow-sm flex items-center gap-2">
+                                        <button type="submit" class="w-auto px-4 py-2 text-sm bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-md font-semibold shadow-sm flex items-center justify-center gap-1">
+                                            <i class="ri-save-line text-base"></i>
+                                            ${paperId ? 'تحديث الورقة' : 'حفظ الورقة'}
+                                        </button>
+                                        <button type="button" id="cancel-paper-btn" class="w-auto px-4 py-2 text-sm bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-md font-semibold shadow-sm flex items-center justify-center gap-1">
+                                            <i class="ri-close-line text-base"></i>
+                                            إلغاء
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

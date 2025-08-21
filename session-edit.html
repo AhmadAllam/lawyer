@@ -20,7 +20,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col low-power" style="background: linear-gradient(135deg, #334155, #111827, #1e3a8a);">
+<body class="h-screen flex flex-col low-power overflow-hidden" style="background: linear-gradient(135deg, #334155, #111827, #1e3a8a);">
   <!-- Header (same style as new.html) -->
   <header class="fixed top-0 left-0 right-0 z-40 px-2 py-1 bg-blue-900 border-b border-blue-900">
     <div class="grid grid-cols-3 items-center">
@@ -46,9 +46,9 @@
   </header>
 
   <!-- Main Content -->
-  <main class="flex-1 p-0 mt-10">
-    <div class="w-full h-full">
-      <div class="border-0 bg-white h-full">
+  <main class="flex-1 p-0 mt-10 overflow-hidden">
+    <div class="w-full h-full overflow-y-auto">
+      <div class="border-0 bg-white min-h-full">
         <!-- Container expected by displaySessionForm -->
         <div id="modal-content" class="px-4 pb-4 text-gray-900"></div>
       </div>

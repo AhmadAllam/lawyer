@@ -114,46 +114,33 @@ function displaySessionForm(sessionId = null, sessionData = null) {
     if (typeof setHeaderAsBack === 'function') setHeaderAsBack();
 
     container.innerHTML = `
-        <div class="bg-white rounded-2xl p-6 shadow-2xl border-2 border-blue-300">
+        <div class="bg-white rounded-2xl p-6 shadow-2xl">
             <form id="session-form" class="space-y-6" novalidate>
-                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-6 bg-blue-50 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-md">
-                    <div>
-                        <label for="session-date" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                            <i class="ri-calendar-line text-blue-600 ml-2"></i>
-                            تاريخ الجلسة
-                        </label>
-                        <input type="date" id="session-date" name="sessionDate" value="${currentSessionData.sessionDate || ''}" required class="mt-1 block w-full p-3 bg-white border-2 border-gray-400 rounded-lg shadow-sm placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors font-semibold text-gray-800">
-                </div>
-                    <div>
-                        <label for="session-roll" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                            <i class="ri-list-check text-green-600 ml-2"></i>
-                            الرول
-                        </label>
-                        <input type="text" id="session-roll" name="roll" value="${currentSessionData.roll || ''}" class="mt-1 block w-full p-3 bg-white border-2 border-gray-400 rounded-lg shadow-sm placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors font-semibold text-gray-800">
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-6 bg-blue-50 backdrop-blur-sm rounded-xl shadow-md">
+                    <div class="flex items-stretch">
+                        <label for="session-date" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-calendar-line text-blue-600 ml-2"></i>تاريخ الجلسة</label>
+                        <input type="date" id="session-date" name="sessionDate" value="${currentSessionData.sessionDate || ''}" required class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-800 -mr-px">
                     </div>
-                    <div>
-                        <label for="inventory-number" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                            <i class="ri-hashtag text-purple-600 ml-2"></i>
-                            رقم الحصر
-                        </label>
-                        <input type="text" id="inventory-number" name="inventoryNumber" value="${currentSessionData.inventoryNumber || ''}" class="mt-1 block w-full p-3 bg-white border-2 border-gray-400 rounded-lg shadow-sm placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors font-semibold text-gray-800">
+                    <div class="flex items-stretch">
+                        <label for="session-roll" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-list-check text-green-600 ml-2"></i>الرول</label>
+                        <input type="text" id="session-roll" name="roll" value="${currentSessionData.roll || ''}" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-800 -mr-px">
                     </div>
-                    <div>
-                        <label for="inventory-year" class="block text-sm font-semibold text-gray-700 text-right mb-2">
-                            <i class="ri-calendar-2-line text-orange-600 ml-2"></i>
-                            سنة الحصر
-                        </label>
-                        <input type="text" id="inventory-year" name="inventoryYear" value="${currentSessionData.inventoryYear || ''}" class="mt-1 block w-full p-3 bg-white border-2 border-gray-400 rounded-lg shadow-sm placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors font-semibold text-gray-800">
+                    <div class="flex items-stretch">
+                        <label for="inventory-number" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-hashtag text-purple-600 ml-2"></i>رقم الحصر</label>
+                        <input type="text" id="inventory-number" name="inventoryNumber" value="${currentSessionData.inventoryNumber || ''}" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-800 -mr-px">
+                    </div>
+                    <div class="flex items-stretch">
+                        <label for="inventory-year" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-calendar-2-line text-orange-600 ml-2"></i>سنة الحصر</label>
+                        <input type="text" id="inventory-year" name="inventoryYear" value="${currentSessionData.inventoryYear || ''}" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-800 -mr-px">
                     </div>
                 </div>
                 
                 <!-- حقل القرار -->
-                <div class="p-6 bg-blue-50 backdrop-blur-sm rounded-xl border-2 border-blue-300 shadow-md">
-                    <label for="session-decision" class="block text-sm font-semibold text-gray-700 text-right mb-3">
-                        <i class="ri-file-text-line text-indigo-600 ml-2"></i>
-                        القرار
-                    </label>
-                    <textarea id="session-decision" name="decision" rows="4" placeholder="اكتب قرار الجلسة..." class="mt-1 block w-full p-4 bg-white border-2 border-gray-400 rounded-lg shadow-sm placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors resize-none font-semibold text-gray-800">${currentSessionData.decision || ''}</textarea>
+                <div class="p-6 bg-blue-50 backdrop-blur-sm rounded-xl shadow-md">
+                    <div class="flex items-stretch">
+                        <label for="session-decision" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-file-text-line text-indigo-600 ml-2"></i>القرار</label>
+                        <textarea id="session-decision" name="decision" rows="4" placeholder="اكتب قرار الجلسة..." class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors resize-none font-semibold text-gray-800 -mr-px">${currentSessionData.decision || ''}</textarea>
+                    </div>
                 </div>
                 
                 <div class="flex justify-center pt-4">

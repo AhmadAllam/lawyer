@@ -678,103 +678,103 @@ async function displayAccountForm(accountId = null) {
                 <div class="w-full mx-auto">
                     <form id="account-form" class="space-y-3">
                         <!-- السطر الأول: الموكل والقضية -->
-                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- الموكل -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-user-line text-lg text-green-500"></i>
-                                    الموكل *
-                                </label>
-                                <select id="client-select" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" required>
-                                    <option value="">اختر الموكل</option>
-                                    ${clients.map(client => `
-                                        <option value="${client.id}" ${account && account.clientId === client.id ? 'selected' : ''}>
-                                            ${client.name}
-                                        </option>
-                                    `).join('')}
-                                </select>
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <select id="client-select" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 -mr-px" required>
+                                        <option value="">اختر الموكل</option>
+                                        ${clients.map(client => `
+                                            <option value="${client.id}" ${account && account.clientId === client.id ? 'selected' : ''}>
+                                                ${client.name}
+                                            </option>
+                                        `).join('')}
+                                    </select>
+                                </div>
                             </div>
                             
                             <!-- القضية -->
-                            <div class="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-200">
-                                <label class="block text-base font-bold text-green-800 mb-2 flex items-center gap-2">
-                                    <i class="ri-file-text-line text-lg"></i>
-                                    القضية *
-                                </label>
-                                <select id="case-select" class="w-full p-3 text-base border-2 border-green-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-medium" required>
-                                    <option value="">اختر القضية</option>
-                                </select>
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="case-select" class="px-3 py-2 border-2 border-green-300 bg-green-50 text-sm font-bold text-green-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">القضية</label>
+                                    <select id="case-select" class="flex-1 px-4 py-3 text-base bg-white border-2 border-green-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-medium -mr-px" required>
+                                        <option value="">اختر القضية</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- السطر الثاني: تاريخ الدفع والأتعاب المدفوع -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- تاريخ الدفع -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-calendar-line text-lg text-green-500"></i>
-                                    تاريخ الدفع *
-                                </label>
-                                <input type="date" id="payment-date" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-right"
-                                       value="${account ? account.paymentDate : ''}" required>
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="payment-date" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">تاريخ الدفع</label>
+                                    <input type="date" id="payment-date" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-right -mr-px"
+                                           value="${account ? account.paymentDate : ''}" required>
+                                </div>
                             </div>
                             
                             <!-- الأتعاب المدفوع -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-money-dollar-circle-line text-lg text-green-500"></i>
-                                    الأتعاب المدفوع *
-                                </label>
-                                <input type="number" id="paid-fees" step="0.01" min="0" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                       value="${account ? account.paidFees || '' : ''}" placeholder="0.00" required>
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="paid-fees" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الأتعاب المدفوع</label>
+                                    <input type="number" id="paid-fees" step="0.01" min="0" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 -mr-px"
+                                           value="${account ? account.paidFees || '' : ''}" placeholder="0.00" required>
+                                </div>
                             </div>
                         </div>
                         
                         <!-- السطر الثالث: المصروفات والمتبقي -->
                         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                             <!-- المصروفات -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-file-list-line text-lg text-green-500"></i>
-                                    المصروفات
-                                </label>
-                                <input type="number" id="expenses" step="0.01" min="0" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                       value="${account ? account.expenses || '' : ''}" placeholder="0.00">
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="expenses" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">المصروفات</label>
+                                    <input type="number" id="expenses" step="0.01" min="0" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 -mr-px"
+                                           value="${account ? account.expenses || '' : ''}" placeholder="0.00">
+                                </div>
                             </div>
                             
                             <!-- المتبقي -->
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-time-line text-lg text-green-500"></i>
-                                    المتبقي
-                                </label>
-                                <input type="number" id="remaining" step="0.01" min="0" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500"
-                                       value="${account ? account.remaining || '' : ''}" placeholder="0.00">
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="remaining" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">المتبقي</label>
+                                    <input type="number" id="remaining" step="0.01" min="0" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 -mr-px"
+                                           value="${account ? account.remaining || '' : ''}" placeholder="0.00">
+                                </div>
                             </div>
                         </div>
                         
                         <!-- السطر الرابع: الملاحظات -->
-                        <div class="grid grid-cols-1 gap-4">
-                            <div class="bg-white p-4 rounded-lg border border-gray-200 hover:border-green-300 transition-colors">
-                                <label class="block text-base font-bold text-gray-700 mb-2 flex items-center gap-2">
-                                    <i class="ri-file-text-line text-lg text-green-500"></i>
-                                    ملاحظات
-                                </label>
-                                <input type="text" id="notes" class="w-full p-3 text-base border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-green-500" 
-                                       value="${account ? account.notes || '' : ''}" placeholder="أي ملاحظات إضافية...">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+                            <!-- الملاحظات -->
+                            <div>
+                                <div class="flex items-stretch">
+                                    <label for="notes" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">ملاحظات</label>
+                                    <input type="text" id="notes" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 -mr-px" 
+                                           value="${account ? account.notes || '' : ''}" placeholder="أي ملاحظات إضافية...">
+                                </div>
                             </div>
                         </div>
                         
                         <!-- أزرار الحفظ والإلغاء -->
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-gray-200">
-                            <button type="submit" class="px-6 py-3 text-base bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
-                                <i class="ri-save-line text-lg"></i>
-                                ${isEdit ? 'تحديث الحساب' : 'حفظ الحساب'}
-                            </button>
-                            <button type="button" id="cancel-account-btn" class="px-6 py-3 text-base bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-lg font-bold transition-all shadow-md hover:shadow-lg transform hover:scale-105 flex items-center justify-center gap-2">
-                                <i class="ri-close-line text-lg"></i>
-                                إلغاء
-                            </button>
+                        <div class="mt-auto pt-4">
+                            <div class="sticky bottom-0 left-0 right-0 z-10 bg-gray-50 border-t border-gray-200 py-3">
+                                <div class="flex justify-center">
+                                    <div class="bg-white border border-gray-300 rounded-md px-3 py-2 shadow-sm flex items-center gap-2">
+                                        <button type="submit" class="w-auto px-4 py-2 text-sm bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-md font-semibold shadow-sm flex items-center justify-center gap-1">
+                                            <i class="ri-save-line text-base"></i>
+                                            ${isEdit ? 'تحديث الحساب' : 'حفظ الحساب'}
+                                        </button>
+                                        <button type="button" id="cancel-account-btn" class="w-auto px-4 py-2 text-sm bg-gradient-to-r from-gray-500 to-gray-600 hover:from-gray-600 hover:to-gray-700 text-white rounded-md font-semibold shadow-sm flex items-center justify-center gap-1">
+                                            <i class="ri-close-line text-base"></i>
+                                            إلغاء
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
