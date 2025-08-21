@@ -55,7 +55,7 @@ function loadSearchContent() {
     container.innerHTML = `
         <div class="px-4 pb-2 pt-0"></div>
         <div class="flex gap-6 h-[calc(100vh-120px)] min-h-0">
-            <div class="w-1/3 space-y-6">
+            <div class="search-left-pane w-1/3 space-y-6">
                 <div class="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-200 shadow-sm">
                     <div class="text-center mb-4">
                         <div class="w-16 h-16 bg-blue-600 rounded-full flex items-center justify-center mx-auto mb-3">
@@ -213,7 +213,7 @@ function setupClientsScrollBox() {
         rightWrapper.style.minHeight = '0px';
         clientsList.style.maxHeight = (targetH - 24) + 'px';
         clientsList.style.overflowY = 'auto';
-        const leftPane = document.querySelector('#search-content-container .w-1/3');
+        const leftPane = document.querySelector('.search-left-pane');
         if (leftPane) {
             leftPane.style.maxHeight = targetH + 'px';
             leftPane.style.minHeight = '0px';
@@ -223,7 +223,7 @@ function setupClientsScrollBox() {
 }
 
 function setupHoverScrollBehavior() {
-    const leftPane = document.querySelector('#search-content-container .w-1/3');
+    const leftPane = document.querySelector('.search-left-pane');
     const rightList = document.getElementById('clients-list');
     const mainEl = document.querySelector('main');
     if (!leftPane || !rightList || !mainEl) return;
@@ -863,7 +863,7 @@ async function performQuickSearch(query) {
         clientsList.innerHTML = html;
         attachClientCardListeners();
         
-        // تحديث عداد النتائج المعروضة
+        // تحديث عداد ��لنتائج المعروضة
         const displayedResultsElement = document.getElementById('displayed-results');
         if (displayedResultsElement) {
             displayedResultsElement.textContent = validMatchingClients.length;
@@ -902,7 +902,7 @@ async function updateQuickStats() {
 // دالة حذف الموكل
 async function handleDeleteClient(clientId) {
     try {
-        // جلب بيانات الموكل
+        // جلب بيانات ��لموكل
         const client = await getById('clients', clientId);
         if (!client) {
             showToast('الموكل غير موجود', 'error');
@@ -989,7 +989,7 @@ async function handleCreateFolderAndUploadForClient(clientName) {
 // فتح مجلد الموكل من نافذة البحث
 async function handleOpenFolderForClient(clientName) {
     if (!clientName) {
-        showToast('يجب تحديد اسم الموكل', 'error');
+        showToast('يجب تحدي�� اسم الموكل', 'error');
         return;
     }
     

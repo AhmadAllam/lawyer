@@ -1,4 +1,3 @@
-
 async function displayCaseEditForm(caseId) {
     try {
         const caseData = await getById('cases', caseId);
@@ -161,6 +160,10 @@ async function displayEditClientForm(clientId) {
                                 <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
                                 <input type="text" id="edit-client-phone" value="${client.phone || ''}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right">
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">رقم التوكيل</label>
+                                <input type="text" id="edit-client-poa-number" value="${client.poaNumber || ''}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">العنوان</label>
@@ -201,7 +204,8 @@ function attachEditClientListeners(clientId) {
                 name: document.getElementById('edit-client-name').value.trim(),
                 capacity: document.getElementById('edit-client-capacity').value.trim(),
                 phone: document.getElementById('edit-client-phone').value.trim(),
-                address: document.getElementById('edit-client-address').value.trim()
+                address: document.getElementById('edit-client-address').value.trim(),
+                poaNumber: document.getElementById('edit-client-poa-number').value.trim()
             };
 
             if (!updatedClient.name) {
@@ -261,6 +265,10 @@ async function displayEditOpponentForm(opponentId) {
                                 <label class="block text-sm font-medium text-gray-700 mb-1">رقم الهاتف</label>
                                 <input type="text" id="edit-opponent-phone" value="${opponent.phone || ''}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right">
                             </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">رقم الملف</label>
+                                <input type="text" id="edit-opponent-file-number" value="${opponent.fileNumber || ''}" class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right">
+                            </div>
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">العنوان</label>
@@ -298,7 +306,8 @@ function attachEditOpponentListeners(opponentId) {
                 name: document.getElementById('edit-opponent-name').value.trim(),
                 capacity: document.getElementById('edit-opponent-capacity').value.trim(),
                 phone: document.getElementById('edit-opponent-phone').value.trim(),
-                address: document.getElementById('edit-opponent-address').value.trim()
+                address: document.getElementById('edit-opponent-address').value.trim(),
+                fileNumber: document.getElementById('edit-opponent-file-number').value.trim()
             };
 
             if (!updatedOpponent.name) {

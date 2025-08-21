@@ -4,18 +4,18 @@ function updateOpponentDisplay(opponents) {
     
     const currentOpponent = opponents[currentOpponentIndex];
     
-    // تحديث البيانات باستخدام selectors أكثر دقة
-    const opponentSection = document.querySelector('.bg-red-50\\/50');
-    if (!opponentSection) return;
+    // استخدام IDs مباشرة بدل selectors معقدة
+    const nameEl = document.getElementById('opponent-name-value');
+    const capacityEl = document.getElementById('opponent-capacity-value');
+    const addressEl = document.getElementById('opponent-address-value');
+    const phoneEl = document.getElementById('opponent-phone-value');
+    const fileNumberEl = document.getElementById('opponent-file-number-value');
     
-    const dataFields = opponentSection.querySelectorAll('.space-y-4 .text-center .font-bold, .space-y-4 .text-center .font-medium');
-    
-    if (dataFields.length >= 4) {
-        dataFields[0].textContent = currentOpponent.name || 'فارغ';
-        dataFields[1].textContent = currentOpponent.capacity || 'فارغ';
-        dataFields[2].textContent = currentOpponent.address || 'فارغ';
-        dataFields[3].textContent = currentOpponent.phone || 'فارغ';
-    }
+    if (nameEl) nameEl.textContent = currentOpponent.name || 'فارغ';
+    if (capacityEl) capacityEl.textContent = currentOpponent.capacity || 'فارغ';
+    if (addressEl) addressEl.textContent = currentOpponent.address || 'فارغ';
+    if (phoneEl) phoneEl.textContent = currentOpponent.phone || 'فارغ';
+    if (fileNumberEl) fileNumberEl.textContent = currentOpponent.fileNumber || 'فارغ';
     
     // تحديث زر التعديل
     const editBtn = document.querySelector('.edit-opponent-btn');

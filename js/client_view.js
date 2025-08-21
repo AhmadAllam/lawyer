@@ -1,6 +1,3 @@
-
-
-
 async function displayClientViewForm(clientId) {
     try {
         const client = await getById('clients', clientId);
@@ -66,6 +63,10 @@ async function displayClientViewForm(clientId) {
                                     <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">الهاتف</div>
                                     <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.phone || 'فارغ'}</div>
                                 </div>
+                                <div class="inline-flex w-full items-stretch">
+                                    <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">رقم التوكيل</div>
+                                    <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.poaNumber || 'فارغ'}</div>
+                                </div>
                             </div>
                             
                             <div class="mt-6 text-center">
@@ -106,6 +107,10 @@ async function displayClientViewForm(clientId) {
                             <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">الهاتف</div>
                             <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
                             </div>
+                            <div class="inline-flex w-full items-stretch">
+                            <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">رقم الملف</div>
+                            <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
+                            </div>
                             </div>
                             <div class="mt-6 text-center">
                             <button class="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
@@ -130,6 +135,10 @@ async function displayClientViewForm(clientId) {
                                     <div class="inline-flex w-full items-stretch">
                                         <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">الهاتف</div>
                                         <div id="opponent-phone-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.phone || 'فارغ'}</div>
+                                    </div>
+                                    <div class="inline-flex w-full items-stretch">
+                                        <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">رقم الملف</div>
+                                        <div id="opponent-file-number-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.fileNumber || 'فارغ'}</div>
                                     </div>
                                 </div>
                                 <div class="mt-6 text-center">
@@ -386,7 +395,7 @@ function attachCaseCardListeners() {
                 arrow.style.transform = 'rotate(180deg)';
                 
 
-                stateManager.currentCaseId = parseInt(caseId);
+                stateManager.currentCaseId = parseInt(firstCaseId);
                 
 
                 await loadCaseSessions(caseId);
@@ -411,7 +420,7 @@ function attachCaseCardListeners() {
 
 // توسيع النافذة لعرض بيانات القضية
 function expandModalForCaseDetails() {
-    // دعم الوضعين: مضمّن داخل البحث أو مودال
+    // دعم الوضعي��: مضمّن داخل البحث أو مودال
     const modalContainer = document.getElementById('modal-container') || document.getElementById('modal-container-hidden');
     const modalContent = document.getElementById('modal-content');
     if (modalContainer && modalContent) {
@@ -464,15 +473,21 @@ let currentOpponentIndex = 0;
 // دالة تحديث عرض الخصم الحالي
 function updateOpponentDisplay(opponents) {
     if (opponents.length === 0) return;
+    
     const currentOpponent = opponents[currentOpponentIndex];
+    
     const nameEl = document.getElementById('opponent-name-value');
     const capacityEl = document.getElementById('opponent-capacity-value');
     const addressEl = document.getElementById('opponent-address-value');
     const phoneEl = document.getElementById('opponent-phone-value');
+    const fileNumberEl = document.getElementById('opponent-file-number-value');
+    
     if (nameEl) nameEl.textContent = currentOpponent.name || 'فارغ';
     if (capacityEl) capacityEl.textContent = currentOpponent.capacity || 'فارغ';
     if (addressEl) addressEl.textContent = currentOpponent.address || 'فارغ';
     if (phoneEl) phoneEl.textContent = currentOpponent.phone || 'فارغ';
+    if (fileNumberEl) fileNumberEl.textContent = currentOpponent.fileNumber || 'فارغ';
+    
     const editBtn = document.querySelector('.edit-opponent-btn');
     if (editBtn) {
         editBtn.setAttribute('data-opponent-id', currentOpponent.id);
@@ -559,7 +574,7 @@ function attachClientViewListeners(clientId, opponents) {
                 }
                 
                 if (!caseRecord.caseNumber || !caseRecord.caseYear) {
-                    showToast('يجب إدخال رقم الدعوى والسنة أولاً قبل إضافة الجلسات', 'error');
+                    showToast('يجب إدخال رقم الدعوى والسنة أولاً قبل إضافة الج��سات', 'error');
                     return;
                 }
                 

@@ -19,8 +19,8 @@ window.loadCaseSessions = async function loadCaseSessions(caseId) {
             return;
         }
         
-        // ترتيب الجلسات حسب التاريخ (الأحدث أولاً)
-        sessions.sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate));
+        // ترتيب الجلسات حسب التاريخ (الأقدم أولاً)
+        sessions.sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate));
         
         let sessionsHtml = '';
         sessions.forEach((session, index) => {
@@ -541,8 +541,8 @@ async function loadCaseSessionsForView(sessions) {
         return;
     }
     
-    // ترتيب الجلسات حسب التاريخ (الأحدث أولاً)
-    sessions.sort((a, b) => new Date(b.sessionDate) - new Date(a.sessionDate));
+    // ترتيب الجلسات حسب التاريخ (الأقدم أولاً)
+    sessions.sort((a, b) => new Date(a.sessionDate) - new Date(b.sessionDate));
     
     let html = '';
     for (const session of sessions) {

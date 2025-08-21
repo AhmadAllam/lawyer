@@ -1,4 +1,3 @@
-
 async function displayEditClientFormInline(clientId) {
     try {
         const client = await getById('clients', clientId);
@@ -58,6 +57,16 @@ async function displayEditClientFormInline(clientId) {
                                     الهاتف
                                 </label>
                                 <input type="text" id="client-phone" name="phone" value="${client.phone || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="client-poa-number" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-blue-50 border-2 border-blue-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    رقم التوكيل
+                                </label>
+                                <input type="text" id="client-poa-number" name="poaNumber" value="${client.poaNumber || ''}" 
                                        class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
                             </div>
                         </div>
@@ -170,6 +179,16 @@ async function displayEditOpponentFormInline(opponentId) {
                                     الهاتف
                                 </label>
                                 <input type="text" id="opponent-phone" name="phone" value="${opponent.phone || ''}" 
+                                       class="flex-1 p-3 bg-white border-2 border-red-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <div class="inline-flex w-full items-stretch">
+                                <label for="opponent-file-number" class="w-24 md:w-28 shrink-0 pr-3 py-3 text-sm font-semibold text-gray-700 bg-red-50 border-2 border-red-300 rounded-r-lg border-l-0 flex items-center justify-start text-right">
+                                    رقم الملف
+                                </label>
+                                <input type="text" id="opponent-file-number" name="fileNumber" value="${opponent.fileNumber || ''}" 
                                        class="flex-1 p-3 bg-white border-2 border-red-300 rounded-l-lg border-r-0 shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 text-right transition-colors font-semibold text-gray-800">
                             </div>
                         </div>

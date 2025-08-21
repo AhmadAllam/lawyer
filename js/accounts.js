@@ -826,8 +826,23 @@ function attachAccountFormListeners(accountId) {
     const caseSelect = document.getElementById('case-select');
     const form = document.getElementById('account-form');
     const cancelBtn = document.getElementById('cancel-account-btn');
+    const paidFeesInput = document.getElementById('paid-fees');
+    const expensesInput = document.getElementById('expenses');
+    const remainingInput = document.getElementById('remaining');
     
-    // تغيير الموكل
+    // دالة حساب المتبقي تلقائياً
+    function calculateRemaining() {
+        const paidFees = parseFloat(paidFeesInput.value) || 0;
+        const expenses = parseFloat(expensesInput.value) || 0;
+        const remaining = paidFees - expenses;
+        remainingInput.value = remaining >= 0 ? remaining : 0;
+    }
+    
+    // حساب المتبقي عند تغيير الأتعاب أو المصروفات
+    paidFeesInput.addEventListener('input', calculateRemaining);
+    expensesInput.addEventListener('input', calculateRemaining);
+    
+    // تغ��ير الموكل
     clientSelect.addEventListener('change', async (e) => {
         const clientId = parseInt(e.target.value);
         if (clientId) {

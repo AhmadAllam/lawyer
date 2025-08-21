@@ -24,6 +24,10 @@ const partyDetailsFormHTML = `
                     <label for="client-phone" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">الهاتف</label>
                     <input type="text" id="client-phone" name="clientPhone" class="flex-1 px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
                 </div>
+                <div class="flex items-stretch">
+                    <label for="client-poa-number" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">رقم التوكيل</label>
+                    <input type="text" id="client-poa-number" name="clientPoaNumber" class="flex-1 px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                </div>
             </div>
         </div>
         <div class="flex items-center justify-center"><span class="text-sm md:text-base font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">ضد</span></div>
@@ -48,6 +52,10 @@ const partyDetailsFormHTML = `
                 <div class="flex items-stretch">
                     <label for="opponent-phone" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">الهاتف</label>
                     <input type="text" id="opponent-phone" name="opponentPhone" class="flex-1 px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                </div>
+                <div class="flex items-stretch">
+                    <label for="file-number" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">رقم الملف</label>
+                    <input type="text" id="file-number" name="fileNumber" class="flex-1 px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
                 </div>
             </div>
         </div>
@@ -137,6 +145,7 @@ async function loadSelectedClientData() {
             document.getElementById('client-capacity').value = clientData.capacity || '';
             document.getElementById('client-address').value = clientData.address || '';
             document.getElementById('client-phone').value = clientData.phone || '';
+            document.getElementById('client-poa-number').value = clientData.poaNumber || '';
         }
     } catch (error) {
         console.error('Error loading client data:', error);
@@ -167,6 +176,7 @@ function setupAutocompleteFields() {
         document.getElementById('client-capacity').value = item ? item.capacity || '' : '';
         document.getElementById('client-address').value = item ? item.address || '' : '';
         document.getElementById('client-phone').value = item ? item.phone || '' : '';
+        document.getElementById('client-poa-number').value = item ? item.poaNumber || '' : '';
         // Update cases count when client changes
         updateClientCasesCount();
     });
@@ -177,6 +187,7 @@ function setupAutocompleteFields() {
         document.getElementById('opponent-capacity').value = item ? item.capacity || '' : '';
         document.getElementById('opponent-address').value = item ? item.address || '' : '';
         document.getElementById('opponent-phone').value = item ? item.phone || '' : '';
+        document.getElementById('file-number').value = item ? item.fileNumber || '' : '';
     });
 }
 
@@ -205,7 +216,7 @@ function setupBackButton() {
                 return;
             }
 
-            // لو في شاشة "ادخال بيانات الدعوى" (case-details-form) ارجع ل"ادخال بيانات الأطراف"
+            // لو في شاشة "ادخال بيانات الدعوى" (case-details-form) ارجع ل"ادخال بيانات ا��أطراف"
             if (caseForm) {
                 e.preventDefault();
                 const partyContainer = document.getElementById('party-form-container');
@@ -330,7 +341,8 @@ async function saveParties(partyData) {
             name: partyData.clientName,
             capacity: partyData.clientCapacity,
             address: partyData.clientAddress,
-            phone: partyData.clientPhone
+            phone: partyData.clientPhone,
+            poaNumber: partyData.clientPoaNumber
         };
         clientId = await addClient(clientData);
     }
@@ -340,7 +352,8 @@ async function saveParties(partyData) {
             name: partyData.opponentName,
             capacity: partyData.opponentCapacity,
             address: partyData.opponentAddress,
-            phone: partyData.opponentPhone
+            phone: partyData.opponentPhone,
+            fileNumber: partyData.fileNumber
         };
         opponentId = await addOpponent(opponentData);
     }
@@ -502,7 +515,7 @@ async function displayCaseDetailsForm() {
                                 <option value="">اختر المحكمة</option>
                                 <option value="__custom__">إدخال يدوي...</option>
                             </select>
-                            <input type="text" id="court" name="court" class="w-full h-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right transition-colors font-semibold text-gray-800 hidden" placeholder="اكتب اسم المحكمة">
+                            <input type="text" id="court" name="court" class="w-full h-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right transition-colors font-semibold text-gray-800 hidden" placeholder="اكتب اسم ال��حكمة">
                         </div>
                     </div>
                     <div class="flex items-stretch">
@@ -538,7 +551,7 @@ async function displayCaseDetailsForm() {
                     
                     <!-- Actions Row: Save and proceed to sessions -->
                     <div class="col-span-2 flex flex-row flex-wrap items-center justify-center gap-1 pt-4">
-                        <button type="button" id="manage-sessions-btn" class="flex items-center gap-2 px-4 py-2 text-white rounded-md text-sm font-semibold border-2 border-gray-700 hover:border-blue-700 focus:outline-none focus:ring-0 focus:border-blue-700">
+                        <button type="button" id="manage-sessions-btn" class="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md text-sm font-semibold">
                             <i class="ri-save-3-line"></i>
                             <span>حفظ ومتابعة للجلسات</span>
                             <span class="text-xs opacity-80">(<span id="case-session-count">0</span>)</span>
@@ -567,6 +580,14 @@ async function displayCaseDetailsForm() {
              if (form.elements[key]) {
                 form.elements[key].value = value;
             }
+        }
+    }
+    
+    // Auto-fill POA number from parties data if available and field is empty
+    if (stateManager.caseDataStash.parties && stateManager.caseDataStash.parties.clientPoaNumber) {
+        const poaNumberField = document.getElementById('poaNumber');
+        if (poaNumberField && !poaNumberField.value) {
+            poaNumberField.value = stateManager.caseDataStash.parties.clientPoaNumber;
         }
     }
     
