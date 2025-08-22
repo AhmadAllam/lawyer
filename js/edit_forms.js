@@ -509,9 +509,16 @@ async function displayEditSessionForm(sessionId) {
                         <div>
                             <label for="edit-session-inventory-year" class="block text-sm font-semibold text-gray-700 text-right mb-2">
                                 <i class="ri-calendar-2-line text-orange-600 ml-2"></i>
-                                سنة الحصر
+                                سنة ا��حصر
                             </label>
                             <input type="text" id="edit-session-inventory-year" value="${session.inventoryYear || ''}" class="mt-1 block w-full p-3 bg-white border-2 border-blue-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">
+                        </div>
+                        <div>
+                            <label for="edit-session-requests" class="block text-sm font-semibold text-gray-700 text-right mb-2">
+                                <i class="ri-question-answer-line text-indigo-600 ml-2"></i>
+                                الطلبات
+                            </label>
+                            <textarea id="edit-session-requests" rows="3" class="mt-1 block w-full p-3 bg-white border-2 border-blue-300 rounded-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800">${session.requests || ''}</textarea>
                         </div>
                     </div>
                     
@@ -558,7 +565,8 @@ function attachEditSessionListeners(sessionId, caseId) {
                 roll: document.getElementById('edit-session-roll').value.trim(),
                 inventoryNumber: document.getElementById('edit-session-inventory-number').value.trim(),
                 inventoryYear: document.getElementById('edit-session-inventory-year').value.trim(),
-                decision: document.getElementById('edit-session-decision').value.trim()
+                decision: document.getElementById('edit-session-decision').value.trim(),
+                requests: document.getElementById('edit-session-requests').value.trim()
             };
 
             if (!updatedSession.sessionDate) {

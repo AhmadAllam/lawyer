@@ -63,11 +63,7 @@ async function displayClientViewForm(clientId) {
                                     <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">الهاتف</div>
                                     <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.phone || 'فارغ'}</div>
                                 </div>
-                                <div class="inline-flex w-full items-stretch">
-                                    <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-blue-50 border border-blue-200 rounded-r-lg border-l-0">رقم التوكيل</div>
-                                    <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${client.poaNumber || 'فارغ'}</div>
-                                </div>
-                            </div>
+                                                            </div>
                             
                             <div class="mt-6 text-center">
                                 <button id="edit-client-data-btn" class="px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105" data-client-id="${clientId}">
@@ -107,11 +103,7 @@ async function displayClientViewForm(clientId) {
                             <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">الهاتف</div>
                             <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
                             </div>
-                            <div class="inline-flex w-full items-stretch">
-                            <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">رقم الملف</div>
-                            <div class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">فارغ</div>
-                            </div>
-                            </div>
+                                                        </div>
                             <div class="mt-6 text-center">
                             <button class="px-6 py-3 bg-gray-400 text-white rounded-lg cursor-not-allowed" disabled>
                             <i class="ri-edit-line mr-2"></i>تعديل
@@ -136,11 +128,7 @@ async function displayClientViewForm(clientId) {
                                         <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">الهاتف</div>
                                         <div id="opponent-phone-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.phone || 'فارغ'}</div>
                                     </div>
-                                    <div class="inline-flex w-full items-stretch">
-                                        <div class="w-24 md:w-28 shrink-0 px-3 py-3 text-sm font-medium text-gray-700 bg-red-50 border border-red-200 rounded-r-lg border-l-0">رقم الملف</div>
-                                        <div id="opponent-file-number-value" class="flex-1 font-medium text-gray-800 bg-white p-3 border rounded-l-lg border-r-0">${opponents[0]?.fileNumber || 'فارغ'}</div>
-                                    </div>
-                                </div>
+                                                                    </div>
                                 <div class="mt-6 text-center">
                                     <button class="edit-opponent-btn px-6 py-3 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all font-bold shadow-md hover:shadow-lg transform hover:scale-105" data-opponent-id="${opponents[0]?.id}">
                                         <i class="ri-edit-line mr-2"></i>تعديل
@@ -296,19 +284,23 @@ async function loadClientCasesList(cases) {
                                 <p class="text-sm font-medium text-gray-800">${caseRecord.court || 'فارغ'}</p>
                             </div>
                             
+                            <div class="bg-white rounded-lg p-4 shadow-md border border-pink-100 hover:shadow-lg transition-shadow text-center">
+                                <span class="text-sm font-bold text-pink-700 block mb-2">رقم الدائرة</span>
+                                <p class="text-sm font-medium text-gray-800">${caseRecord.circuitNumber || 'فارغ'}</p>
+                            </div>
+                            
                             <div class="bg-white rounded-lg p-4 shadow-md border border-purple-100 hover:shadow-lg transition-shadow text-center">
                                 <span class="text-sm font-bold text-purple-700 block mb-2">حالة القضية</span>
                                 <p class="text-sm font-medium text-gray-800">${caseRecord.caseStatus || 'فارغ'}</p>
                             </div>
-                        </div>
-                        
-                        <!-- صف الملاحظات مع تحسين المحاذاة -->
-                        <div class="grid grid-cols-1 gap-4 mb-6">
-                            <div class="bg-white rounded-lg p-4 shadow-md border border-yellow-100 hover:shadow-lg transition-shadow text-center">
-                                <div class="text-center mb-2">
-                                    <span class="text-sm font-bold text-yellow-700">ملاحظات</span>
-                                </div>
-                                <p class="text-sm text-gray-800 leading-relaxed text-center">${caseRecord.notes || 'فارغ'}</p>
+                            
+                            <div class="bg-white rounded-lg p-4 shadow-md border border-sky-100 hover:shadow-lg transition-shadow text-center">
+                                <span class="text-sm font-bold text-sky-700 block mb-2">رقم الملف</span>
+                                <p class="text-sm font-medium text-gray-800">${caseRecord.fileNumber || 'فارغ'}</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md border border-yellow-100 hover:shadow-lg transition-shadow text-center md:col-span-2 lg:col-span-2">
+                                <span class="text-sm font-bold text-yellow-700 block mb-2">ملاحظات</span>
+                                <p class="text-sm text-gray-800 leading-relaxed">${caseRecord.notes || 'فارغ'}</p>
                             </div>
                         </div>
                         
@@ -480,14 +472,12 @@ function updateOpponentDisplay(opponents) {
     const capacityEl = document.getElementById('opponent-capacity-value');
     const addressEl = document.getElementById('opponent-address-value');
     const phoneEl = document.getElementById('opponent-phone-value');
-    const fileNumberEl = document.getElementById('opponent-file-number-value');
-    
+        
     if (nameEl) nameEl.textContent = currentOpponent.name || 'فارغ';
     if (capacityEl) capacityEl.textContent = currentOpponent.capacity || 'فارغ';
     if (addressEl) addressEl.textContent = currentOpponent.address || 'فارغ';
     if (phoneEl) phoneEl.textContent = currentOpponent.phone || 'فارغ';
-    if (fileNumberEl) fileNumberEl.textContent = currentOpponent.fileNumber || 'فارغ';
-    
+        
     const editBtn = document.querySelector('.edit-opponent-btn');
     if (editBtn) {
         editBtn.setAttribute('data-opponent-id', currentOpponent.id);

@@ -1,5 +1,5 @@
 const partyDetailsFormHTML = `
-<form id="party-details-form" class="space-y-6">
+<form id="party-details-form" class="space-y-6 min-h-[calc(100vh-48px)]">
     <div class="flex flex-row items-center gap-6">
         <div class="flex-1 p-6 rounded-xl bg-gradient-to-br from-blue-100 to-indigo-200 shadow-lg">
              <h3 class="text-lg font-bold text-blue-800 mb-4 flex items-center justify-center gap-2"><i class="ri-user-3-line"></i><span>بيانات الموكل</span></h3>
@@ -14,10 +14,9 @@ const partyDetailsFormHTML = `
                 <div class="flex items-stretch"><label for="client-capacity" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">صفته</label><input type="text" id="client-capacity" name="clientCapacity" class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                 <div class="flex items-stretch"><label for="client-address" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">عنوانه</label><input type="text" id="client-address" name="clientAddress" class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                 <div class="flex items-stretch"><label for="client-phone" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الهاتف</label><input type="text" id="client-phone" name="clientPhone" class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
-                <div class="flex items-stretch"><label for="client-poa-number" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم التوكيل</label><input type="text" id="client-poa-number" name="clientPoaNumber" class="flex-1 p-3 bg-white border-2 border-blue-300 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
-            </div>
+                            </div>
         </div>
-        <div class="flex items-center justify-center"><span class="text-2xl font-black text-gray-500">ضد</span></div>
+        <div class="flex items-center justify-center"><span class="text-sm md:text-base font-bold text-gray-700 bg-gray-100 px-3 py-1.5 rounded-full border border-gray-200">ضد</span></div>
         <div class="flex-1 p-6 rounded-xl bg-gradient-to-br from-pink-50 to-red-50 shadow-lg">
              <h3 class="text-lg font-bold text-red-600 mb-4 flex items-center justify-center gap-2"><i class="ri-shield-user-line"></i><span>بيانات الخصم</span></h3>
             <div class="space-y-3">
@@ -29,10 +28,9 @@ const partyDetailsFormHTML = `
                     <div id="opponent-autocomplete-results-container" class="autocomplete-results hidden"></div>
                 </div>
                 <div class="flex items-stretch"><label for="opponent-capacity" class="px-3 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">صفته</label><input type="text" id="opponent-capacity" name="opponentCapacity" class="flex-1 p-3 bg-white border-2 border-red-200 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 text-right font-semibold text-gray-800 -mr-px"></div>
-                <div class="flex items-stretch"><label for="opponent-address" class="px-3 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">عن��انه</label><input type="text" id="opponent-address" name="opponentAddress" class="flex-1 p-3 bg-white border-2 border-red-200 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 text-right font-semibold text-gray-800 -mr-px"></div>
+                <div class="flex items-stretch"><label for="opponent-address" class="px-3 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">عنوانه</label><input type="text" id="opponent-address" name="opponentAddress" class="flex-1 p-3 bg-white border-2 border-red-200 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 text-right font-semibold text-gray-800 -mr-px"></div>
                 <div class="flex items-stretch"><label for="opponent-phone" class="px-3 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الهاتف</label><input type="text" id="opponent-phone" name="opponentPhone" class="flex-1 p-3 bg-white border-2 border-red-200 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 text-right font-semibold text-gray-800 -mr-px"></div>
-                <div class="flex items-stretch"><label for="file-number" class="px-3 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الملف</label><input type="text" id="file-number" name="fileNumber" class="flex-1 p-3 bg-white border-2 border-red-200 rounded-l-lg shadow-sm placeholder-gray-400 focus:ring-2 focus:ring-red-400 focus:border-red-400 text-right font-semibold text-gray-800 -mr-px"></div>
-            </div>
+                            </div>
         </div>
     </div>
     <div id="party-details-actions" class="flex flex-col items-center gap-3 p-4 mt-3 mb-6 bg-blue-50 rounded-xl shadow-md">
@@ -91,8 +89,7 @@ function displayNewCaseForm() {
                 document.getElementById('client-capacity').value = clientData.capacity || '';
                 document.getElementById('client-address').value = clientData.address || '';
                 document.getElementById('client-phone').value = clientData.phone || '';
-                document.getElementById('client-poa-number').value = clientData.poaNumber || '';
-            }
+                            }
         } catch (error) {
         }
     }
@@ -111,7 +108,6 @@ function displayNewCaseForm() {
         document.getElementById('client-capacity').value = item ? item.capacity || '' : '';
         document.getElementById('client-address').value = item ? item.address || '' : '';
         document.getElementById('client-phone').value = item ? item.phone || '' : '';
-        document.getElementById('client-poa-number').value = item ? item.poaNumber || '' : '';
 
         updateClientCasesCount();
     });
@@ -121,8 +117,7 @@ function displayNewCaseForm() {
         document.getElementById('opponent-capacity').value = item ? item.capacity || '' : '';
         document.getElementById('opponent-address').value = item ? item.address || '' : '';
         document.getElementById('opponent-phone').value = item ? item.phone || '' : '';
-        document.getElementById('file-number').value = item ? item.fileNumber || '' : '';
-    });
+            });
     
 
     document.getElementById('client-name').addEventListener('input', () => {
@@ -349,11 +344,9 @@ async function displayCaseDetailsForm() {
                             <input type="text" id="court" name="court" class="w-full h-full px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right transition-colors font-semibold text-gray-800 hidden" placeholder="اكتب اسم المحكمة">
                         </div>
                     </div>
+                    <div class="flex items-stretch"><label for="circuitNumber" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الدائرة</label><input type="text" id="circuitNumber" name="circuitNumber" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                     <div class="flex items-stretch">
-                        <label for="caseStatus" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg flex items-center gap-2">
-                            <i class="ri-pulse-line text-blue-600"></i>
-                            <span>حالة القضية</span>
-                        </label>
+                        <label for="caseStatus" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">حالة القضية</label>
                         <select id="caseStatus" name="caseStatus" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-bold transition-colors -mr-px">
                             <option value="">اختر حالة القضية</option>
                             <option value="جاري النظر">جاري النظر</option>
@@ -369,7 +362,7 @@ async function displayCaseDetailsForm() {
                         <label for="caseNumber" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الدعوى</label>
                         <div class="flex-1 -mr-px">
                             <input type="text" id="caseNumber" name="caseNumber" class="w-full px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800">
-                            <p id="case-number-error" class="text-red-500 text-xs text-right mt-1 hidden">هذا ا��رقم مستخدم بالفعل لهذه السنة.</p>
+                            <p id="case-number-error" class="text-red-500 text-xs text-right mt-1 hidden">هذا الرقم مستخدم بالفعل لهذه السنة.</p>
                         </div>
                     </div>
                     <div class="flex items-stretch"><label for="caseYear" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">سنة الدعوى</label><input type="text" id="caseYear" name="caseYear" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
@@ -378,6 +371,7 @@ async function displayCaseDetailsForm() {
                     <div class="flex items-stretch"><label for="cassationNumber" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم النقض</label><input type="text" id="cassationNumber" name="cassationNumber" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                     <div class="flex items-stretch"><label for="cassationYear" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">سنة النقض</label><input type="text" id="cassationYear" name="cassationYear" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                     <div class="flex items-stretch"><label for="notes" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">ملاحظات</label><input type="text" id="notes" name="notes" placeholder="أضف أي ملاحظات..." class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
+                    <div class="flex items-stretch"><label for="fileNumber" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الملف</label><input type="text" id="fileNumber" name="fileNumber" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                     <div class="flex items-stretch"><label for="poaNumber" class="px-3 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم التوكيل</label><input type="text" id="poaNumber" name="poaNumber" class="flex-1 px-3 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-right font-semibold text-gray-800 -mr-px"></div>
                     
                     <!-- Actions Row: Save and proceed to sessions (unified) -->
@@ -674,7 +668,7 @@ async function handleCreateFolderAndUpload() {
             showToast(result.message, 'error');
         }
     } catch (error) {
-        showToast('حدث خطأ ��ي إنشاء المجلد', 'error');
+        showToast('حدث خطأ في إنشاء المجلد', 'error');
     }
 }
 

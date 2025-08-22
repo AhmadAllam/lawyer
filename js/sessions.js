@@ -133,13 +133,19 @@ function displaySessionForm(sessionId = null, sessionData = null) {
                         <label for="inventory-year" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-calendar-2-line text-orange-600 ml-2"></i>سنة الحصر</label>
                         <input type="text" id="inventory-year" name="inventoryYear" value="${currentSessionData.inventoryYear || ''}" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-800 -mr-px">
                     </div>
-                </div>
+                                    </div>
                 
                 <!-- حقل القرار -->
                 <div class="p-6 bg-blue-50 backdrop-blur-sm rounded-xl shadow-md">
-                    <div class="flex items-stretch">
-                        <label for="session-decision" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-file-text-line text-indigo-600 ml-2"></i>القرار</label>
-                        <textarea id="session-decision" name="decision" rows="4" placeholder="اكتب قرار الجلسة..." class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors resize-none font-semibold text-gray-800 -mr-px">${currentSessionData.decision || ''}</textarea>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="flex items-stretch">
+                            <label for="session-decision" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-file-text-line text-indigo-600 ml-2"></i>القرار</label>
+                            <textarea id="session-decision" name="decision" rows="4" placeholder="اكتب قرار الجلسة..." class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors resize-none font-semibold text-gray-800 -mr-px">${currentSessionData.decision || ''}</textarea>
+                        </div>
+                        <div class="flex items-stretch">
+                            <label for="session-requests" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg"><i class="ri-question-answer-line text-indigo-600 ml-2"></i>الطلبات</label>
+                            <textarea id="session-requests" name="requests" rows="4" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right transition-colors resize-none font-semibold text-gray-800 -mr-px">${currentSessionData.requests || ''}</textarea>
+                        </div>
                     </div>
                 </div>
                 
@@ -173,8 +179,9 @@ async function handleSaveSession(e, sessionId) {
     const inventoryNumber = newSessionData.inventoryNumber?.trim() || '';
     const inventoryYear = newSessionData.inventoryYear?.trim() || '';
     const decision = newSessionData.decision?.trim() || '';
+    const requests = newSessionData.requests?.trim() || '';
     
-    const hasAnyData = sessionDate !== '' || roll !== '' || inventoryNumber !== '' || inventoryYear !== '' || decision !== '';
+    const hasAnyData = sessionDate !== '' || roll !== '' || inventoryNumber !== '' || inventoryYear !== '' || decision !== '' || requests !== '';
     
     if (!hasAnyData) {
         showToast('يجب إدخال بيانات في أي حقل على الأقل قبل الحفظ', 'error');

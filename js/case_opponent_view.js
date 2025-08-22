@@ -79,11 +79,15 @@ window.loadCaseSessions = async function loadCaseSessions(caseId) {
                             </div>
                         </div>
                         
-                        <!-- الصف الثاني: القرار -->
-                        <div class="grid grid-cols-1 gap-4 mb-4">
+                        <!-- الصف الثاني: القرار والطلبات -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
                             <div class="bg-white rounded-lg p-4 shadow-md border border-indigo-100 hover:shadow-lg transition-shadow text-center">
                                 <span class="text-sm font-bold text-indigo-700 block mb-2">القرار</span>
                                 <p class="text-sm font-medium text-gray-800 leading-relaxed">${session.decision || 'فارغ'}</p>
+                            </div>
+                            <div class="bg-white rounded-lg p-4 shadow-md border border-blue-100 hover:shadow-lg transition-shadow text-center">
+                                <span class="text-sm font-bold text-blue-700 block mb-2">الطلبات</span>
+                                <p class="text-sm font-medium text-gray-800 leading-relaxed">${session.requests || 'فارغ'}</p>
                             </div>
                         </div>
                     </div>
