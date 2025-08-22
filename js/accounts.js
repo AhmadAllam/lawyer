@@ -711,8 +711,13 @@ async function displayAccountForm(accountId = null) {
                             <div>
                                 <div class="flex items-stretch">
                                     <label for="payment-date" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">تاريخ الدفع</label>
-                                    <input type="date" id="payment-date" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-right -mr-px"
-                                           value="${account ? account.paymentDate : ''}" required>
+                                    <div class="flex-1 -mr-px relative">
+                                        <input type="text" id="payment-date" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 text-right pr-10" value="${account ? account.paymentDate : ''}" placeholder="YYYY-MM-DD" required>
+                                        <button type="button" id="open-date-picker-payment" class="absolute inset-y-0 left-2 flex items-center text-green-600">
+                                            <i class="ri-calendar-event-line"></i>
+                                        </button>
+                                        <div id="custom-date-picker-payment" class="absolute left-0 top-12 bg-white border border-gray-300 rounded-lg shadow-xl p-3 w-80 hidden z-50"></div>
+                                    </div>
                                 </div>
                             </div>
                             
@@ -807,6 +812,74 @@ async function displayAccountForm(accountId = null) {
             }
         }, 100);
         
+        (function(){
+            const dateInput = document.getElementById('payment-date');
+            const dpBtn = document.getElementById('open-date-picker-payment');
+            const dp = document.getElementById('custom-date-picker-payment');
+            function pad(n){return n.toString().padStart(2,'0');}
+            function toYMD(d){return d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());}
+            function parseYMD(s){const ok = s && /^\d{4}-\d{2}-\d{2}$/.test(s); if(!ok) return null; const [y,mo,da]=s.split('-').map(Number); const d=new Date(y,mo-1,da); if(d.getFullYear()!==y||d.getMonth()!==mo-1||d.getDate()!==da) return null; return d;}
+            function normalizeDMYString(s){ if(!s) return null; const m=s.trim().match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{2,4})$/); if(!m) return null; let d=parseInt(m[1],10), mo=parseInt(m[2],10), y=parseInt(m[3],10); if(m[3].length===2){ y = y < 50 ? 2000 + y : 1900 + y; } const dt=new Date(y,mo-1,d); if(dt.getFullYear()!==y||dt.getMonth()!==mo-1||dt.getDate()!==d) return null; return toYMD(dt); }
+            let viewDate = parseYMD(dateInput?.value) || new Date();
+            function buildDPHTML(d){
+                const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+                const dayNames=['سبت','أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة'];
+                const y=d.getFullYear();
+                const m=d.getMonth();
+                const first=new Date(y,m,1);
+                let start=first.getDay();
+                const daysInMonth=new Date(y,m+1,0).getDate();
+                const cells=[]; for(let i=0;i<start;i++) cells.push(''); for(let day=1; day<=daysInMonth; day++) cells.push(day); while(cells.length%7!==0) cells.push('');
+                let grid='';
+                for(const c of cells){ if(c==='') grid+=`<button type="button" class="w-10 h-10 text-center text-gray-300 cursor-default" disabled>-</button>`; else { const isSel = dateInput && dateInput.value && dateInput.value===toYMD(new Date(y,m,c)); grid+=`<button type="button" data-day="${c}" class="w-10 h-10 rounded ${isSel?'bg-green-600 text-white':'hover:bg-green-100 text-gray-800'}">${c}</button>`; } }
+                return `
+                    <div class="flex items-center justify-between mb-2">
+                        <button type="button" id="dp-next" class="w-8 h-8 border rounded text-sm leading-none flex items-center justify-center">›</button>
+                        <div class="flex items-center gap-2">
+                            <select id="dp-month" class="border rounded px-2 py-1 text-sm">${months.map((nm,idx)=>`<option value="${idx}" ${idx===m?'selected':''}>${nm}</option>`).join('')}</select>
+                            <input id="dp-year" type="number" class="border rounded px-2 py-1 w-20 text-sm" value="${y}">
+                        </div>
+                        <button type="button" id="dp-prev" class="w-8 h-8 border rounded text-sm leading-none flex items-center justify-center">‹</button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-600 mb-1">${dayNames.map(n=>`<div>${n}</div>`).join('')}</div>
+                    <div class="grid grid-cols-7 gap-1 mb-2">${grid}</div>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex gap-2">
+                            <button type="button" id="dp-today" class="px-2 py-1 border rounded text-sm">اليوم</button>
+                            <button type="button" id="dp-yesterday" class="px-2 py-1 border rounded text-sm">البارحة</button>
+                            <button type="button" id="dp-tomorrow" class="px-2 py-1 border rounded text-sm">غداً</button>
+                        </div>
+                        <button type="button" id="dp-close" class="px-2 py-1 border rounded text-sm">إغلاق</button>
+                    </div>`;
+            }
+            function attachDPHandlers(){
+                if (dp) dp.addEventListener('click', (e)=> e.stopPropagation());
+                const prev=dp.querySelector('#dp-prev');
+                const next=dp.querySelector('#dp-next');
+                const mSel=dp.querySelector('#dp-month');
+                const yInp=dp.querySelector('#dp-year');
+                if(prev) prev.addEventListener('click',(e)=>{ e.stopPropagation(); viewDate=new Date(viewDate.getFullYear(), viewDate.getMonth()-1, 1); renderDP(); });
+                if(next) next.addEventListener('click',(e)=>{ e.stopPropagation(); viewDate=new Date(viewDate.getFullYear(), viewDate.getMonth()+1, 1); renderDP(); });
+                if(mSel) { mSel.addEventListener('click',(e)=> e.stopPropagation()); mSel.addEventListener('change',(e)=>{ e.stopPropagation(); viewDate=new Date(viewDate.getFullYear(), parseInt(mSel.value), 1); renderDP(); }); }
+                if(yInp) { yInp.addEventListener('click',(e)=> e.stopPropagation()); yInp.addEventListener('input',(e)=>{ e.stopPropagation(); const yy=parseInt(yInp.value)||viewDate.getFullYear(); viewDate=new Date(yy, viewDate.getMonth(), 1); }); yInp.addEventListener('change',(e)=>{ e.stopPropagation(); renderDP(); }); }
+                dp.querySelectorAll('button[data-day]').forEach(b=>{ b.addEventListener('click',(e)=>{ e.stopPropagation(); const day=parseInt(b.getAttribute('data-day')); const d=new Date(viewDate.getFullYear(), viewDate.getMonth(), day); if(dateInput) dateInput.value=toYMD(d); dp.classList.add('hidden'); }); });
+                const t=dp.querySelector('#dp-today');
+                const yst=dp.querySelector('#dp-yesterday');
+                const tm=dp.querySelector('#dp-tomorrow');
+                const cl=dp.querySelector('#dp-close');
+                if(t) t.addEventListener('click',(e)=>{ e.stopPropagation(); const d=new Date(); if(dateInput) dateInput.value=toYMD(d); dp.classList.add('hidden'); });
+                if(yst) yst.addEventListener('click',(e)=>{ e.stopPropagation(); const d=new Date(); d.setDate(d.getDate()-1); if(dateInput) dateInput.value=toYMD(d); dp.classList.add('hidden'); });
+                if(tm) tm.addEventListener('click',(e)=>{ e.stopPropagation(); const d=new Date(); d.setDate(d.getDate()+1); if(dateInput) dateInput.value=toYMD(d); dp.classList.add('hidden'); });
+                if(cl) cl.addEventListener('click',(e)=>{ e.stopPropagation(); dp.classList.add('hidden'); });
+            }
+            function renderDP(){ if(dp) { dp.innerHTML=buildDPHTML(viewDate); attachDPHandlers(); } }
+            function openDP(){ renderDP(); if(dp) dp.classList.remove('hidden'); }
+            function outsideClose(e){ if(dp && !dp.contains(e.target) && e.target!==dpBtn && !e.target.closest('#open-date-picker-payment')) dp.classList.add('hidden'); }
+            if(dpBtn && dp){ dpBtn.addEventListener('click',(e)=>{ e.stopPropagation(); openDP(); }); document.addEventListener('click', outsideClose); }
+            const tryNormalizeManual = ()=>{ if(dateInput){ const n = normalizeDMYString(dateInput.value); if(n) dateInput.value = n; } };
+            if(dateInput){ dateInput.addEventListener('blur', tryNormalizeManual); dateInput.addEventListener('change', tryNormalizeManual); }
+        })();
+        
         // إضافة مستمعي الأحداث
         attachAccountFormListeners(accountId);
         
@@ -898,7 +971,8 @@ async function handleSaveAccount(accountId) {
     try {
         const clientId = parseInt(document.getElementById('client-select').value);
         const caseId = parseInt(document.getElementById('case-select').value);
-        const paymentDate = document.getElementById('payment-date').value;
+        const rawPaymentDate = document.getElementById('payment-date').value;
+        const paymentDate = (function(s){ const m = s && s.trim().match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{2,4})$/); if(m){ let d=parseInt(m[1],10), mo=parseInt(m[2],10), y=parseInt(m[3],10); if(m[3].length===2){ y = y<50?2000+y:1900+y; } const dt=new Date(y,mo-1,d); if(dt.getFullYear()===y && dt.getMonth()===mo-1 && dt.getDate()===d){ const p=n=>n.toString().padStart(2,'0'); return `${y}-${p(mo)}-${p(d)}`; } } return s; })(rawPaymentDate);
         const paidFees = parseFloat(document.getElementById('paid-fees').value) || 0;
         const expenses = parseFloat(document.getElementById('expenses').value) || 0;
         const remaining = parseFloat(document.getElementById('remaining').value) || 0;

@@ -386,10 +386,14 @@ function attachCaseCardListeners() {
                 caseDetails.classList.remove('hidden');
                 arrow.style.transform = 'rotate(180deg)';
                 
+                var firstCaseId = caseId;
+                
 
                 stateManager.currentCaseId = parseInt(firstCaseId);
                 
 
+                stateManager.currentCaseId = parseInt(caseId);
+                
                 await loadCaseSessions(caseId);
             } else {
                 // إغلاق الكارت الحالي فقط وترك الباقي مطوي
