@@ -66,8 +66,26 @@ function displayNewCaseForm() {
     modalContent.innerHTML = partyDetailsFormHTML;
 
     const form = document.getElementById('party-details-form');
-    
 
+    const isClientLocked = !!stateManager.selectedClientId;
+    if (isClientLocked) {
+        const clientCard = document.querySelector('#party-details-form .p-6.rounded-xl.bg-gradient-to-br.from-blue-100.to-indigo-200.shadow-lg');
+        const header = clientCard ? clientCard.querySelector('h3') : null;
+        if (header) {
+            const lockEl = document.createElement('i');
+            lockEl.className = 'ri-lock-2-fill text-gray-600 ml-2';
+            header.appendChild(lockEl);
+        }
+        ['client-name','client-capacity','client-address','client-phone'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.readOnly = true;
+                el.classList.add('bg-gray-100','cursor-not-allowed');
+            }
+        });
+    }
+
+    
     if (stateManager.caseDataStash.parties) {
         for (const [key, value] of Object.entries(stateManager.caseDataStash.parties)) {
             if (form.elements[key]) {
@@ -103,14 +121,15 @@ function displayNewCaseForm() {
 
     updateClientCasesCount();
     
-    setupAutocomplete('client-name', 'client-autocomplete-results-container', getAllClients, (item) => {
-        stateManager.setSelectedClientId(item ? item.id : null);
-        document.getElementById('client-capacity').value = item ? item.capacity || '' : '';
-        document.getElementById('client-address').value = item ? item.address || '' : '';
-        document.getElementById('client-phone').value = item ? item.phone || '' : '';
-
-        updateClientCasesCount();
-    });
+    if (!isClientLocked) {
+        setupAutocomplete('client-name', 'client-autocomplete-results-container', getAllClients, (item) => {
+            stateManager.setSelectedClientId(item ? item.id : null);
+            document.getElementById('client-capacity').value = item ? item.capacity || '' : '';
+            document.getElementById('client-address').value = item ? item.address || '' : '';
+            document.getElementById('client-phone').value = item ? item.phone || '' : '';
+            updateClientCasesCount();
+        });
+    }
 
     setupAutocomplete('opponent-name', 'opponent-autocomplete-results-container', getAllOpponents, (item) => {
         stateManager.setSelectedOpponentId(item ? item.id : null);
@@ -120,12 +139,12 @@ function displayNewCaseForm() {
             });
     
 
-    document.getElementById('client-name').addEventListener('input', () => {
-
-        stateManager.setSelectedClientId(null);
-
-        setTimeout(updateClientCasesCount, 300);
-    });
+    if (!isClientLocked) {
+        document.getElementById('client-name').addEventListener('input', () => {
+            stateManager.setSelectedClientId(null);
+            setTimeout(updateClientCasesCount, 300);
+        });
+    }
 }
 
 async function handleSavePartiesOnly(e) {
