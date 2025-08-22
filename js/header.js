@@ -142,9 +142,81 @@ async function enforceAppPassword() {
         setTimeout(()=>{ if (input) input.focus(); }, 50);
     } catch (e) {}
 }
-// Copy-on-click for header title (no extra buttons)
+// Copy-on-click for header title + inject global quick home button
 window.addEventListener('DOMContentLoaded', async () => {
     await enforceAppPassword();
+
+    // Add quick Home button on the far side of the title bar if header exists
+    try {
+        const header = document.querySelector('header');
+        if (header) {
+            let container = header.querySelector('.grid');
+            if (!container) container = header.querySelector('.flex');
+            const isHome = /(^|\\|\/)index\.html$/.test(window.location.pathname) || window.location.pathname === '/' || window.location.pathname === '';
+            if (isHome) {
+                const existingQuickHome = header.querySelector('#quick-home-btn');
+                if (existingQuickHome) existingQuickHome.remove();
+            } else {
+                const existingQuickHome = header.querySelector('#quick-home-btn');
+                if (!existingQuickHome) {
+                    const btn = document.createElement('button');
+                    btn.id = 'quick-home-btn';
+                    btn.className = 'inline-flex items-center gap-1 px-2 py-1 bg-transparent border border-white/20 rounded-full shadow-sm text-white hover:bg-white/10 text-sm';
+                    btn.innerHTML = '<i class="ri-home-5-line text-white text-base"></i><span class="text-white">الرئيسيه</span>';
+                    btn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        window.location.href = 'index.html';
+                    });
+
+                    const leftSlot = document.createElement('div');
+                    leftSlot.className = 'justify-self-end';
+                    leftSlot.appendChild(btn);
+
+                    const grid = header.querySelector('.grid');
+                    if (grid && getComputedStyle(grid).display.includes('grid')) {
+                        const cols = grid.getAttribute('class') || '';
+                        if (!cols.includes('grid-cols-3')) grid.classList.add('grid-cols-3');
+                        const lastCell = grid.children[2];
+                        if (lastCell) {
+                            lastCell.appendChild(btn);
+                        } else {
+                            const cell = document.createElement('div');
+                            cell.className = 'justify-self-end';
+                            cell.appendChild(btn);
+                            grid.appendChild(cell);
+                        }
+                    } else if (container) {
+                        container.appendChild(leftSlot);
+                    } else {
+                        header.appendChild(leftSlot);
+                    }
+                }
+            }
+        }
+    } catch (e) {}
+
+    try {
+        const enforceBackLabel = () => {
+            const backBtn = document.getElementById('back-to-main');
+            if (!backBtn) return;
+            let backSpan = backBtn.querySelector('span');
+            if (!backSpan) {
+                backSpan = document.createElement('span');
+                backSpan.className = 'text-white';
+                backBtn.appendChild(backSpan);
+            }
+            if (backSpan.textContent !== 'رجوع') backSpan.textContent = 'رجوع';
+        };
+        enforceBackLabel();
+        const headerEl = document.querySelector('header');
+        if (headerEl && !window.__backBtnObserverBound) {
+            window.__backBtnObserverBound = true;
+            const obs = new MutationObserver(() => enforceBackLabel());
+            obs.observe(headerEl, { childList: true, subtree: true });
+        }
+    } catch (e) {}
+
     const copyableTitle = document.getElementById('copyable-title');
     const pageTitleSpan = document.getElementById('page-title');
     if (copyableTitle && pageTitleSpan) {
