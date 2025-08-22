@@ -455,6 +455,7 @@ async function displayCaseDetailsForm() {
             try {
                 const fullCaseData = {
                     ...caseData,
+                    subject: caseData.caseSubject,
                     clientId: stateManager.selectedClientId,
                     opponentId: stateManager.selectedOpponentId
                 };
