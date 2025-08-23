@@ -718,6 +718,61 @@ input:focus, textarea:focus, select:focus {
     background: #94a3b8;
 }
 
+/* جلسات - وضع القائمة: تمييز الكرت باللون الأخضر عند التحويم */
+#sessions-list .session-card:hover {
+    background-color: #dcfce7; /* green-100 */
+    border-color: #22c55e; /* green-500 */
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+
+/* أعمال إدارية - وضع القائمة: مطابقة استايل كروت الجلسات */
+#administrative-list .work-card {
+    background-color: #dbeafe; /* blue-100 */
+    border-color: #bfdbfe; /* blue-200 */
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0.375rem; /* rounded-md */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+#administrative-list .work-card:hover {
+    background-color: #dcfce7; /* green-100 */
+    border-color: #22c55e; /* green-500 */
+    box-shadow: 0 4px 12px rgba(34, 197, 94, 0.25);
+}
+
+/* أعمال إدارية - أزرار الكارت ملوّنة ومصغّرة مثل الجلسات */
+#administrative-list .work-card .edit-work-btn,
+#administrative-list .work-card .delete-work-btn {
+    padding: 3px 6px !important;
+    border-radius: 6px !important;
+    color: #ffffff !important;
+}
+#administrative-list .work-card .edit-work-btn {
+    background-color: #2563eb; /* blue-600 */
+}
+#administrative-list .work-card .edit-work-btn:hover {
+    background-color: #1d4ed8; /* blue-700 */
+}
+#administrative-list .work-card .delete-work-btn {
+    background-color: #dc2626; /* red-600 */
+}
+#administrative-list .work-card .delete-work-btn:hover {
+    background-color: #b91c1c; /* red-700 */
+}
+#administrative-list .work-card .edit-work-btn i,
+#administrative-list .work-card .delete-work-btn i {
+    font-size: 14px !important;
+    line-height: 1 !important;
+}
+
+/* أعمال إدارية - جعل أزرار الكارت تحت بعض داخل الحاوية اليمنى */
+#administrative-list .work-card > div.flex > div.flex:last-child {
+    flex-direction: column !important;
+    gap: 6px !important; /* مسافة رأسية بين الأزرار */
+    align-items: stretch !important; /* اجعل الأزرار بعرض الحاوية */
+}
+
 /* تحسين أزرار التعديل في الجلسات */
 .edit-session-btn {
     transition: all 0.2s ease;
@@ -726,6 +781,55 @@ input:focus, textarea:focus, select:focus {
 .edit-session-btn:hover {
     transform: scale(1.05);
 }
+
+/* جلسات - أزرار الكارت أكبر وملوّنة */
+#sessions-list .session-card .view-case-btn,
+#sessions-list .session-card .edit-session-btn,
+#sessions-list .session-card .delete-session-btn {
+    padding: 3px 6px !important; /* تقليل بسيط للحجم */
+    border-radius: 6px !important;
+    color: #ffffff !important; /* أيقونة/نص أبيض */
+}
+
+/* عرض بيانات القضية - أخضر */
+#sessions-list .session-card .view-case-btn {
+    background-color: #16a34a; /* green-600 */
+}
+#sessions-list .session-card .view-case-btn:hover {
+    background-color: #15803d; /* green-700 */
+}
+
+/* تعديل الجلسة - أزرق */
+#sessions-list .session-card .edit-session-btn {
+    background-color: #2563eb; /* blue-600 */
+}
+#sessions-list .session-card .edit-session-btn:hover {
+    background-color: #1d4ed8; /* blue-700 */
+}
+
+/* حذف الجلسة - أحمر */
+#sessions-list .session-card .delete-session-btn {
+    background-color: #dc2626; /* red-600 */
+}
+#sessions-list .session-card .delete-session-btn:hover {
+    background-color: #b91c1c; /* red-700 */
+}
+
+/* تكبير حجم الأيقونات داخل الأزرار */
+#sessions-list .session-card .view-case-btn i,
+#sessions-list .session-card .edit-session-btn i,
+#sessions-list .session-card .delete-session-btn i {
+    font-size: 14px !important; /* تقليل بسيط لحجم الأيقونة */
+    line-height: 1 !important;
+}
+
+/* جلسات - جعل أزرار الكارت تحت بعض داخل الحاوية اليمنى */
+#sessions-list .session-card > div.flex > div.flex:last-child {
+    flex-direction: column !important;
+    gap: 6px !important; /* مسافة رأسية بين الأزرار */
+    align-items: stretch !important; /* اجعل الأزرار بعرض الحاوية */
+}
+
 
 /* تحسين شكل عرض المعلومات */
 #client-info-display div,

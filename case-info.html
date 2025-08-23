@@ -112,6 +112,42 @@
             el.parentElement.remove(); // parent is the container with header and list
           }
         });
+
+        // Keep only the related case card and expand it
+        try {
+          const targetCaseId = caseData.id;
+          const cards = document.querySelectorAll('.case-card');
+          cards.forEach(card => {
+            const cid = parseInt(card.getAttribute('data-case-id'), 10);
+            if (cid !== targetCaseId) {
+              card.remove();
+            }
+          });
+          const details = document.querySelector(`.case-details[data-case-id="${targetCaseId}"]`);
+          const arrow = document.querySelector(`.case-arrow[data-case-id="${targetCaseId}"]`);
+          if (details) details.classList.remove('hidden');
+          if (arrow) arrow.style.transform = 'rotate(180deg)';
+        } catch (e) {}
+        
+        try {
+          const opp = await getById('opponents', caseData.opponentId);
+          if (opp) {
+            const n = document.getElementById('opponent-name-value');
+            const c = document.getElementById('opponent-capacity-value');
+            const a = document.getElementById('opponent-address-value');
+            const p = document.getElementById('opponent-phone-value');
+            if (n) n.textContent = opp.name || 'فارغ';
+            if (c) c.textContent = opp.capacity || 'فارغ';
+            if (a) a.textContent = opp.address || 'فارغ';
+            if (p) p.textContent = opp.phone || 'فارغ';
+          }
+          const prevBtn = document.getElementById('prev-opponent-btn');
+          if (prevBtn && prevBtn.parentElement) prevBtn.parentElement.remove();
+          const nextBtn = document.getElementById('next-opponent-btn');
+          if (nextBtn) nextBtn.remove();
+          const idx = document.getElementById('current-opponent-index');
+          if (idx) idx.remove();
+        } catch (e) {}
       } else {
         document.getElementById('modal-content').innerHTML = '<div class="p-8 text-center text-red-600">تعذّر تحميل عرض بيانات القضية.</div>';
       }

@@ -76,6 +76,12 @@ class SessionsCalendar {
         try {
             // جلب كل الجلسات من قاعدة البيانات
             this.sessions = await getAllSessions();
+            try {
+                const cases = await getAllCases();
+                this.caseMap = new Map(cases.map(c => [c.id, c]));
+            } catch (e) {
+                this.caseMap = new Map();
+            }
 
         } catch (error) {
             this.sessions = [];
@@ -126,9 +132,15 @@ class SessionsCalendar {
                                 <i class="ri-search-line text-blue-500"></i>
                                 البحث بالتاريخ
                             </h3>
-                            <input type="date" id="date-search" 
-                                class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium"
-                                value="${this.filteredDate || ''}">
+                            <div class="relative">
+                                <input type="text" id="date-search" placeholder="YYYY-MM-DD"
+                                    class="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm font-medium pr-10"
+                                    value="${this.filteredDate || ''}">
+                                <button type="button" id="open-search-date-picker" class="absolute inset-y-0 left-2 flex items-center text-blue-600">
+                                    <i class="ri-calendar-event-line"></i>
+                                </button>
+                                <div id="search-custom-date-picker" class="absolute left-0 top-12 bg-white border border-gray-300 rounded-lg shadow-xl p-3 w-80 hidden z-50"></div>
+                            </div>
                         </div>
 
                         <!-- Statistics -->
@@ -431,31 +443,45 @@ class SessionsCalendar {
             const roll = session.roll || '-';
             const inventoryNumber = session.inventoryNumber || '-';
             
+            const caseRecord = this.caseMap ? this.caseMap.get(session.caseId) : null;
+            const caseNo = caseRecord ? `${caseRecord.caseNumber || '-'} / ${caseRecord.caseYear || '-'}` : '-';
+            const invCombo = `${inventoryNumber !== '-' ? inventoryNumber : '-'} / ${session.inventoryYear || '-'}`;
             listHTML += `
-                <div class="session-card bg-white border border-gray-200 rounded-lg p-4 hover:bg-blue-50 hover:border-blue-300">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-2">
-                                <i class="ri-calendar-event-line text-blue-500"></i>
-                                <span class="font-semibold text-gray-800">${sessionDate}</span>
-                                ${session.roll ? `<span class=\"text-sm text-gray-500\">• الرول: ${roll}</span>` : ''}
+                <div class="session-card bg-blue-100 border border-blue-200 rounded-md p-2 shadow-sm hover:border-blue-300">
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex-1 space-y-1.5">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <i class="ri-calendar-event-line text-blue-600"></i>
+                                <span class="text-xs text-gray-500 font-semibold" style="font-size:13px">تاريخ الجلسة</span>
+                                <span class="text-sm text-gray-900 font-bold" style="font-size:15px">${sessionDate}</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-blue-700 text-xs" style="background-color: rgba(59,130,246,0.08); font-size:13px;">
+                                    <i class="ri-hashtag"></i>
+                                    <span>الرول: ${roll !== '-' ? roll : '-'}</span>
+                                </span>
                             </div>
-                            <div class="text-sm text-gray-600 mb-2">
-                                ${inventoryNumber !== '-' ? `رقم الحصر: ${inventoryNumber}` : ''}
-                                ${session.inventoryYear ? ` لسنة ${session.inventoryYear}` : ''}
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <i class="ri-briefcase-line text-blue-600"></i>
+                                <span class="text-xs text-gray-500 font-semibold" style="font-size:13px">القضية</span>
+                                <span class="text-sm text-gray-900 font-bold" style="font-size:15px">${caseNo}</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-blue-700 text-xs" style="background-color: rgba(59,130,246,0.08); font-size:13px;">
+                                    <i class="ri-archive-line"></i>
+                                    <span>الحصر: ${invCombo}</span>
+                                </span>
                             </div>
-                            <div class="text-sm text-gray-700">
-                                <strong>القرار:</strong> ${decision}
+                            <div class="flex items-center gap-2">
+                                <i class="ri-flag-line text-blue-600"></i>
+                                <span class="text-xs text-gray-500 font-semibold" style="font-size:13px">القرار</span>
+                                <span class="text-sm text-gray-900 font-semibold" style="font-size:15px">${decision || '-'}</span>
                             </div>
                         </div>
-                        <div class="flex gap-1">
-                            <button class="view-case-btn p-2 text-green-500 hover:bg-green-50 rounded-lg transition-colors" data-session-id="${session.id}" title="عرض بيانات القضية">
+                        <div class="flex flex-col gap-1">
+                            <button class="view-case-btn px-2 py-1 rounded-md transition-colors" data-session-id="${session.id}" title="عرض بيانات القضية">
                                 <i class="ri-eye-line"></i>
                             </button>
-                            <button class="edit-session-btn p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" data-session-id="${session.id}" title="تعديل الجلسة">
+                            <button class="edit-session-btn px-2 py-1 rounded-md transition-colors" data-session-id="${session.id}" title="تعديل الجلسة">
                                 <i class="ri-pencil-line"></i>
                             </button>
-                            <button class="delete-session-btn p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors" data-session-id="${session.id}" title="حذف الجلسة">
+                            <button class="delete-session-btn px-2 py-1 rounded-md transition-colors" data-session-id="${session.id}" title="حذف الجلسة">
                                 <i class="ri-delete-bin-line"></i>
                             </button>
                         </div>
@@ -507,18 +533,116 @@ class SessionsCalendar {
             this.updateContent();
         });
 
-        // Date search - prevent duplicate listeners
+        // Date search - custom picker like edit form
         const dateSearch = document.getElementById('date-search');
+        const dpBtn = document.getElementById('open-search-date-picker');
+        const dp = document.getElementById('search-custom-date-picker');
+        const self = this;
         if (dateSearch) {
-            // Remove existing listener to avoid duplicates
             dateSearch.replaceWith(dateSearch.cloneNode(true));
             const newDateSearch = document.getElementById('date-search');
             newDateSearch.addEventListener('change', (e) => {
                 const selectedDate = e.target.value;
                 if (selectedDate) {
-                    this.searchByDate(selectedDate, { silent: true });
+                    self.searchByDate(selectedDate, { silent: true });
                 }
             });
+            const pad = n => n.toString().padStart(2,'0');
+            const toYMD = d => d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+            const parseYMD = s => { const ok = s && /^\d{4}-\d{2}-\d{2}$/.test(s); if(!ok) return null; const [y,mo,da]=s.split('-').map(Number); const d=new Date(y,mo-1,da); if(d.getFullYear()!==y||d.getMonth()!==mo-1||d.getDate()!==da) return null; return d; };
+            const normalizeDMYString = s => { if(!s) return null; const m=s.trim().match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{2,4})$/); if(!m) return null; let d=parseInt(m[1],10), mo=parseInt(m[2],10), y=parseInt(m[3],10); if(m[3].length===2){ y = y < 50 ? 2000 + y : 1900 + y; } const dt=new Date(y,mo-1,d); if(dt.getFullYear()!==y||dt.getMonth()!==mo-1||dt.getDate()!==d) return null; return toYMD(dt); };
+            let viewDate = parseYMD(newDateSearch.value) || new Date();
+            function buildDPHTML(d) {
+                const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+                const y=d.getFullYear();
+                const m=d.getMonth();
+                const first=new Date(y,m,1);
+                let start=first.getDay();
+                const daysInMonth=new Date(y,m+1,0).getDate();
+                const dayNames=['سبت','أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة'];
+                const cells=[];
+                for(let i=0;i<start;i++) cells.push('');
+                for(let day=1; day<=daysInMonth; day++) cells.push(day);
+                while(cells.length%7!==0) cells.push('');
+                let grid='';
+                for(const c of cells){
+                    if(c==='') grid+=`<button type="button" class="w-10 h-10 text-center text-gray-300 cursor-default" disabled>-</button>`;
+                    else {
+                        const isSel = newDateSearch && newDateSearch.value && newDateSearch.value===toYMD(new Date(y,m,c));
+                        grid+=`<button type="button" data-day="${c}" class="w-10 h-10 rounded ${isSel?'bg-blue-600 text-white':'hover:bg-blue-100 text-gray-800'}">${c}</button>`;
+                    }
+                }
+                return `
+                    <div class="flex items-center justify-between mb-2">
+                        <button type="button" id="dp-next" class="w-8 h-8 border rounded text-sm leading-none flex items-center justify-center">›</button>
+                        <div class="flex items-center gap-2">
+                            <select id="dp-month" class="border rounded px-2 py-1 text-sm">
+                                ${months.map((nm,idx)=>`<option value="${idx}" ${idx===m?'selected':''}>${nm}</option>`).join('')}
+                            </select>
+                            <input id="dp-year" type="number" class="border rounded px-2 py-1 w-20 text-sm" value="${y}">
+                        </div>
+                        <button type="button" id="dp-prev" class="w-8 h-8 border rounded text-sm leading-none flex items-center justify-center">‹</button>
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs text-gray-600 mb-1">
+                        ${dayNames.map(n=>`<div>${n}</div>`).join('')}
+                    </div>
+                    <div class="grid grid-cols-7 gap-1 mb-2">${grid}</div>
+                    <div class="flex items-center justify-between gap-2">
+                        <div class="flex gap-2">
+                            <button type="button" id="dp-today" class="px-2 py-1 border rounded text-sm">اليوم</button>
+                            <button type="button" id="dp-yesterday" class="px-2 py-1 border rounded text-sm">البارحة</button>
+                            <button type="button" id="dp-tomorrow" class="px-2 py-1 border rounded text-sm">غداً</button>
+                        </div>
+                        <button type="button" id="dp-close" class="px-2 py-1 border rounded text-sm">إغلاق</button>
+                    </div>`;
+            }
+            function attachDPHandlers(){
+                const prev=document.getElementById('dp-prev');
+                const next=document.getElementById('dp-next');
+                const mSel=document.getElementById('dp-month');
+                const yInp=document.getElementById('dp-year');
+                if (dp) dp.addEventListener('click', (e)=> e.stopPropagation());
+                if(prev) prev.addEventListener('click',(e)=>{ e.stopPropagation(); viewDate=new Date(viewDate.getFullYear(), viewDate.getMonth()-1, 1); renderDP(); });
+                if(next) next.addEventListener('click',(e)=>{ e.stopPropagation(); viewDate=new Date(viewDate.getFullYear(), viewDate.getMonth()+1, 1); renderDP(); });
+                if(mSel) { mSel.addEventListener('click',(e)=> e.stopPropagation()); mSel.addEventListener('change',(e)=>{ e.stopPropagation(); viewDate=new Date(viewDate.getFullYear(), parseInt(mSel.value), 1); renderDP(); }); }
+                if(yInp) { yInp.addEventListener('click',(e)=> e.stopPropagation()); yInp.addEventListener('input',(e)=>{ e.stopPropagation(); const yy=parseInt(yInp.value)||viewDate.getFullYear(); viewDate=new Date(yy, viewDate.getMonth(), 1); }); yInp.addEventListener('change',(e)=>{ e.stopPropagation(); renderDP(); }); }
+                if(dp) dp.querySelectorAll('button[data-day]').forEach(b=>{
+                    b.addEventListener('click',(e)=>{ e.stopPropagation(); const day=parseInt(b.getAttribute('data-day')); const d=new Date(viewDate.getFullYear(), viewDate.getMonth(), day); if(newDateSearch) newDateSearch.value=toYMD(d); if(dp) dp.classList.add('hidden'); self.searchByDate(toYMD(d), { silent: true }); });
+                });
+                const t=document.getElementById('dp-today');
+                const yst=document.getElementById('dp-yesterday');
+                const tm=document.getElementById('dp-tomorrow');
+                const cl=document.getElementById('dp-close');
+                if(t) t.addEventListener('click',(e)=>{ e.stopPropagation(); const d=new Date(); if(newDateSearch) newDateSearch.value=toYMD(d); if(dp) dp.classList.add('hidden'); self.searchByDate(toYMD(d), { silent: true }); });
+                if(yst) yst.addEventListener('click',(e)=>{ e.stopPropagation(); const d=new Date(); d.setDate(d.getDate()-1); if(newDateSearch) newDateSearch.value=toYMD(d); if(dp) dp.classList.add('hidden'); self.searchByDate(toYMD(d), { silent: true }); });
+                if(tm) tm.addEventListener('click',(e)=>{ e.stopPropagation(); const d=new Date(); d.setDate(d.getDate()+1); if(newDateSearch) newDateSearch.value=toYMD(d); if(dp) dp.classList.add('hidden'); self.searchByDate(toYMD(d), { silent: true }); });
+                if(cl) cl.addEventListener('click',(e)=>{ e.stopPropagation(); if(dp) dp.classList.add('hidden'); });
+            }
+            function renderDP(){ if(dp) { dp.innerHTML=buildDPHTML(viewDate); attachDPHandlers(); } }
+            function openDP(){
+                renderDP();
+                if(!dp) return;
+                dp.classList.remove('hidden');
+                dp.style.position = 'fixed';
+                const target = newDateSearch;
+                const rect = target ? target.getBoundingClientRect() : {left: 0, right: 0, top: 0, bottom: 0};
+                const padding = 8;
+                const assumedWidth = 320;
+                const assumedHeight = 360;
+                let left = Math.min(Math.max(padding, rect.left), window.innerWidth - assumedWidth - padding);
+                let top = rect.bottom + 6;
+                if (top + assumedHeight > window.innerHeight - padding) {
+                    top = rect.top - assumedHeight - 6;
+                    if (top < padding) top = Math.max(padding, window.innerHeight - assumedHeight - padding);
+                }
+                dp.style.left = left + 'px';
+                dp.style.top = top + 'px';
+            }
+            function outsideClose(e){ if(dp && !dp.contains(e.target) && e.target!==dpBtn && !e.target.closest('#open-search-date-picker')) dp.classList.add('hidden'); }
+            if(dpBtn && dp){ dpBtn.addEventListener('click',(e)=>{ e.stopPropagation(); openDP(); }); document.addEventListener('click', outsideClose); }
+            const tryNormalizeManual = ()=>{ if(newDateSearch){ const n = normalizeDMYString(newDateSearch.value); if(n) { newDateSearch.value = n; self.searchByDate(n, { silent: true }); } } };
+            newDateSearch.addEventListener('blur', tryNormalizeManual);
+            newDateSearch.addEventListener('keyup', (e) => { if(e.key==='Enter') tryNormalizeManual(); });
         }
 
         // Clear filter button - prevent duplicate listeners

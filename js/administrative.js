@@ -455,25 +455,32 @@ class AdministrativeManager {
             
             listHTML += `
                 <div class="work-card bg-white border border-gray-200 rounded-lg p-4 hover:bg-indigo-50 hover:border-indigo-300 transition-all duration-200">
-                    <div class="flex justify-between items-start">
-                        <div class="flex-1">
-                            <div class="flex items-center gap-2 mb-2">
+                    <div class="flex justify-between items-start gap-3">
+                        <div class="flex-1 space-y-1.5">
+                            <!-- Row 1: Date + Status -->
+                            <div class="flex items-center gap-2 flex-wrap">
                                 <i class="ri-calendar-event-line text-indigo-500"></i>
-                                <span class="font-semibold text-gray-800">${dueDate}</span>
-                                <span class="text-sm ${completedClass} flex items-center gap-1">
+                                <span class="text-xs text-gray-500 font-semibold" style="font-size:13px">تاريخ الإنجاز</span>
+                                <span class="text-sm text-gray-900 font-bold" style="font-size:15px">${dueDate}</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-indigo-700 text-xs" style="background-color: rgba(99,102,241,0.08); font-size:13px;">
                                     <i class="${completedIcon}"></i>
-                                    ${completed}
+                                    <span>الحالة: ${completed}</span>
                                 </span>
                             </div>
-                            <div class="text-sm text-gray-700 mb-2">
-                                <strong>العمل المطلوب:</strong> ${task}
+                            <!-- Row 2: Task -->
+                            <div class="flex items-center gap-2">
+                                <i class="ri-list-check text-indigo-500"></i>
+                                <span class="text-xs text-gray-500 font-semibold" style="font-size:13px">العمل المطلوب</span>
+                                <span class="text-sm text-gray-900 font-bold" style="font-size:15px">${task}</span>
                             </div>
-                            <div class="text-sm text-gray-600">
-                                <i class="ri-map-pin-line ml-1"></i>
-                                <strong>المكان:</strong> ${location}
+                            <!-- Row 3: Location -->
+                            <div class="flex items-center gap-2">
+                                <i class="ri-map-pin-line text-indigo-500"></i>
+                                <span class="text-xs text-gray-500 font-semibold" style="font-size:13px">مكان العمل</span>
+                                <span class="text-sm text-gray-900 font-semibold" style="font-size:15px">${location}</span>
                             </div>
                         </div>
-                        <div class="flex gap-1">
+                        <div class="flex flex-col gap-1">
                             <button class="edit-work-btn p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition-colors" data-work-id="${work.id}" title="تعديل العمل">
                                 <i class="ri-pencil-line"></i>
                             </button>
