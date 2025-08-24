@@ -12,6 +12,11 @@ async function displaySessionList() {
     }
     const pageHeaderTitle = document.getElementById('page-title');
     if (pageHeaderTitle) pageHeaderTitle.textContent = 'قائمة الجلسات';
+    if (window.location.pathname.includes('search.html')) {
+        const mt = document.getElementById('modal-title');
+        if (mt) mt.textContent = 'جلسات الدعوى الجديده';
+        if (pageHeaderTitle) pageHeaderTitle.textContent = 'جلسات الدعوى الجديده';
+    }
     if (typeof setHeaderAsBack === 'function') setHeaderAsBack();
 
     const sessions = await getFromIndex('sessions', 'caseId', stateManager.currentCaseId);
@@ -95,7 +100,32 @@ function attachSessionListEventListeners() {
     });
 }
 
-function displaySessionForm(sessionId = null, sessionData = null) {
+async function refreshSessionsSidebar(selectedId){
+    try{
+        if (!stateManager.currentCaseId) return;
+        const listEl = document.getElementById('sessions-sidebar-list');
+        if (!listEl) return;
+        let sessions = [];
+        try { sessions = await getFromIndex('sessions','caseId', stateManager.currentCaseId); } catch(e){ sessions = []; }
+        const sorted = [...sessions].sort((a,b)=>{ if(!a.sessionDate) return 1; if(!b.sessionDate) return -1; return new Date(a.sessionDate)-new Date(b.sessionDate); });
+        const html = sorted.map(s => `
+            <div class="flex items-center gap-2">
+                <button class="session-item-btn flex-1 text-right px-3 py-2 rounded ${selectedId===s.id?'bg-blue-200':'bg-blue-50 hover:bg-blue-100'} border border-blue-200 flex justify-between items-center" data-session-id="${s.id}">
+                    <span class="font-semibold">${s.sessionDate || 'غير محدد'}</span>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button class="delete-session-inline px-2 py-2 text-red-600 hover:text-red-700" data-session-id="${s.id}">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
+            </div>
+        `).join('');
+        listEl.innerHTML = html || '<div class="text-gray-500 text-sm">لا توجد جلسات</div>';
+        const h3 = listEl.parentElement ? listEl.parentElement.querySelector('h3') : null;
+        if (h3) h3.textContent = `الجلسات (${sorted.length})`;
+    }catch(e){}
+}
+
+async function displaySessionForm(sessionId = null, sessionData = null) {
     const currentSessionData = sessionData || {};
     
     const embedded = document.getElementById('embedded-content');
@@ -110,10 +140,34 @@ function displaySessionForm(sessionId = null, sessionData = null) {
         container.classList.remove('search-modal-content');
     }
     const pageHeaderTitle2 = document.getElementById('page-title');
-    if (pageHeaderTitle2) pageHeaderTitle2.textContent = 'تعديل الجلسة';
+    if (pageHeaderTitle2) {
+        if (window.location.pathname.includes('new.html') && !sessionId) {
+            pageHeaderTitle2.textContent = 'ادخل بيانات الجلسة الجديده';
+        } else {
+            pageHeaderTitle2.textContent = 'تعديل الجلسة';
+        }
+    }
     if (typeof setHeaderAsBack === 'function') setHeaderAsBack();
+    if (!stateManager.currentCaseId && currentSessionData && currentSessionData.caseId) { stateManager.currentCaseId = currentSessionData.caseId; }
+    const isNewFlow = window.location.pathname.includes('new.html') && !!stateManager.currentCaseId;
+    const enableSidebar = (window.location.pathname.includes('new.html') || window.location.pathname.includes('search.html')) && !!stateManager.currentCaseId;
+    window.STAY_ON_SAVE = !!isNewFlow;
+    if (enableSidebar && window.location.pathname.includes('search.html')) {
+        const modalTitle2 = document.getElementById('modal-title');
+        if (modalTitle2) modalTitle2.textContent = 'جلسات الدعوى الجديده';
+        const pageHeader = document.getElementById('page-title');
+        if (pageHeader) pageHeader.textContent = 'جلسات الدعوى الجديده';
+    }
+    let __sessionsForCase = [];
+    let __sortedSessions = [];
+    let __currentIndex = -1;
+    if (enableSidebar) {
+        try { __sessionsForCase = await getFromIndex('sessions','caseId', stateManager.currentCaseId); } catch(e) { __sessionsForCase = []; }
+        __sortedSessions = [...__sessionsForCase].sort((a,b)=>{ if(!a.sessionDate) return 1; if(!b.sessionDate) return -1; return new Date(a.sessionDate)-new Date(b.sessionDate); });
+        if (sessionId) { __currentIndex = __sortedSessions.findIndex(s=>s.id===sessionId); }
+    }
 
-    container.innerHTML = `
+    const __formHTML = `
         <div class="bg-white rounded-2xl p-6 shadow-2xl">
             <form id="session-form" class="space-y-6" novalidate>
                  <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-5 p-6 bg-blue-50 backdrop-blur-sm rounded-xl shadow-md">
@@ -141,7 +195,6 @@ function displaySessionForm(sessionId = null, sessionData = null) {
                     </div>
                                     </div>
                 
-                <!-- حقل القرار -->
                 <div class="p-6 bg-blue-50 backdrop-blur-sm rounded-xl shadow-md">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div class="flex items-stretch">
@@ -163,6 +216,109 @@ function displaySessionForm(sessionId = null, sessionData = null) {
             </form>
         </div>
     `;
+
+    if (enableSidebar) {
+        const total = __sortedSessions.length;
+        const prevDisabled = (__currentIndex <= 0) ? 'opacity-50 cursor-not-allowed' : '';
+        const nextDisabled = (__currentIndex === -1 || __currentIndex >= total-1) ? 'opacity-50 cursor-not-allowed' : '';
+        const listItems = __sortedSessions.map(s => `
+            <div class="flex items-center gap-2">
+                <button class="session-item-btn flex-1 text-right px-3 py-2 rounded ${sessionId===s.id?'bg-blue-200':'bg-blue-50 hover:bg-blue-100'} border border-blue-200 flex justify-between items-center" data-session-id="${s.id}">
+                    <span class="font-semibold">${s.sessionDate || 'غير محدد'}</span>
+                    <i class="ri-arrow-left-s-line"></i>
+                </button>
+                <button class="delete-session-inline px-2 py-2 text-red-600 hover:text-red-700" data-session-id="${s.id}">
+                    <i class="ri-delete-bin-line"></i>
+                </button>
+            </div>
+        `).join('');
+        container.innerHTML = `
+            <div class="grid grid-cols-1 md:grid-cols-5 gap-3">
+                <div class="order-2 md:order-1 md:col-span-1">
+                    <div class="bg-white rounded-xl border border-blue-200 p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <h3 class="font-bold text-blue-700">الجلسات (${total})</h3>
+                            <button id="add-new-session-inline" class="px-2 py-1 bg-blue-600 text-white rounded text-sm"><i class="ri-add-line"></i> جديدة</button>
+                        </div>
+                        <div id="sessions-sidebar-list" class="space-y-2 max-h-[50vh] md:max-h-[65vh] overflow-auto">${listItems || '<div class="text-gray-500 text-sm">لا توجد جلسات</div>'}</div>
+                    </div>
+                </div>
+                <div class="order-1 md:order-2 md:col-span-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2">
+                            <button id="prev-session-btn" class="px-2 py-1 border rounded ${prevDisabled}"><i class="ri-arrow-right-line"></i></button>
+                            <button id="next-session-btn" class="px-2 py-1 border rounded ${nextDisabled}"><i class="ri-arrow-left-line"></i></button>
+                        </div>
+                    </div>
+                    ${__formHTML}
+                </div>
+            </div>
+        `;
+    } else {
+        container.innerHTML = __formHTML;
+    }
+    if (enableSidebar) {
+        const listEl = document.getElementById('sessions-sidebar-list');
+        listEl?.addEventListener('click', async (evt) => {
+            const delBtn = evt.target.closest('.delete-session-inline');
+            const itemBtn = evt.target.closest('.session-item-btn');
+            if (delBtn) {
+                evt.stopPropagation();
+                const sid = parseInt(delBtn.dataset.sessionId || delBtn.getAttribute('data-session-id'), 10);
+                const ok = confirm('هل أنت متأكد من حذف هذه الجلسة؟');
+                if (!ok) return;
+                const isCurrent = !!sessionId && sid === sessionId;
+                try {
+                    const row = delBtn.parentElement;
+                    const neighbor = row?.nextElementSibling || row?.previousElementSibling;
+                    row?.remove();
+                    const h3 = listEl.parentElement?.querySelector('h3');
+                    if (h3) h3.textContent = `الجلسات (${listEl.querySelectorAll('.delete-session-inline').length})`;
+                    await deleteRecord('sessions', sid);
+                    await updateCountersInHeader();
+                    document.dispatchEvent(new CustomEvent('sessionSaved'));
+                    const nextId = neighbor ? parseInt(neighbor.querySelector('.session-item-btn')?.dataset.sessionId || '0', 10) : 0;
+                    await refreshSessionsSidebar(nextId || (sessionId || null));
+                    if (isCurrent) {
+                        if (nextId) {
+                            const data = await getById('sessions', nextId);
+                            replaceCurrentView(displaySessionForm, nextId, data);
+                        } else {
+                            replaceCurrentView(displaySessionForm, null, null);
+                        }
+                    }
+                    showToast('تم حذف الجلسة بنجاح.');
+                } catch (err) {
+                    showToast('حدث خطأ أثناء الحذف.');
+                }
+                return;
+            }
+            if (itemBtn) {
+                const sid = parseInt(itemBtn.dataset.sessionId, 10);
+                const s = await getById('sessions', sid);
+                navigateTo(displaySessionForm, sid, s);
+                return;
+            }
+        });
+        document.getElementById('add-new-session-inline')?.addEventListener('click', () => {
+            navigateTo(displaySessionForm, null, null);
+        });
+        document.getElementById('prev-session-btn')?.addEventListener('click', async () => {
+            if (__currentIndex > 0) {
+                const s = __sortedSessions[__currentIndex - 1];
+                const data = await getById('sessions', s.id);
+                navigateTo(displaySessionForm, s.id, data);
+            }
+        });
+        document.getElementById('next-session-btn')?.addEventListener('click', async () => {
+            if (__currentIndex !== -1 && __currentIndex < __sortedSessions.length - 1) {
+                const s = __sortedSessions[__currentIndex + 1];
+                const data = await getById('sessions', s.id);
+                navigateTo(displaySessionForm, s.id, data);
+            }
+        });
+    }
+
     const dateInput = document.getElementById('session-date');
     const dpBtn = document.getElementById('open-date-picker');
     const dp = document.getElementById('custom-date-picker');
@@ -263,6 +419,36 @@ function displaySessionForm(sessionId = null, sessionData = null) {
 
     document.getElementById('session-form').addEventListener('submit', (e) => handleSaveSession(e, sessionId));
 
+    if (window.__sessionFormSavedHandler) {
+        document.removeEventListener('sessionSaved', window.__sessionFormSavedHandler);
+    }
+    window.__sessionFormSavedHandler = async () => {
+        try {
+            if (stateManager.currentCaseId) {
+                await refreshSessionsSidebar(sessionId || null);
+            }
+            if (sessionId) {
+                const still = await getById('sessions', sessionId);
+                if (still) {
+                    const data = await getById('sessions', sessionId);
+                    replaceCurrentView(displaySessionForm, sessionId, data);
+                    return;
+                }
+            }
+            let list = [];
+            try { list = await getFromIndex('sessions', 'caseId', stateManager.currentCaseId); } catch(e){ list = []; }
+            list = list.sort((a,b)=>{ if(!a.sessionDate) return 1; if(!b.sessionDate) return -1; return new Date(a.sessionDate)-new Date(b.sessionDate); });
+            if (list.length > 0) {
+                const target = list[0];
+                const data = await getById('sessions', target.id);
+                replaceCurrentView(displaySessionForm, target.id, data);
+            } else {
+                replaceCurrentView(displaySessionForm, null, null);
+            }
+        } catch(e) {}
+    };
+    document.addEventListener('sessionSaved', window.__sessionFormSavedHandler);
+
     // عند العرض المدمج: لا نستخدم المودال، ونحافظ على سلوك العودة الافتراضي
     if (isEmbedded) {
         const modal = document.getElementById('modal');
@@ -317,16 +503,88 @@ async function handleSaveSession(e, sessionId) {
                 return;
             }
             newSessionData.caseId = stateManager.currentCaseId;
-            await addSession(newSessionData);
+            const newId = await addSession(newSessionData);
+            newSessionData.id = newId;
             showToast('تم حفظ الجلسة بنجاح.');
         }
         await updateCountersInHeader();
         
-        // إرسال إشعار لتحديث التقويم
         document.dispatchEvent(new CustomEvent('sessionSaved'));
         
-        // في الصفحة المستقلة لتعديل الجلسة لا نغادر بعد الحفظ
-        if (window.STAY_ON_SAVE || window.location.pathname.includes('session-edit.html')) {
+        if (window.location.pathname.includes('session-edit.html')) {
+            return;
+        }
+        
+        if (window.STAY_ON_SAVE && window.location.pathname.includes('new.html')) {
+            await refreshSessionsSidebar(sessionId ? sessionId : newSessionData.id);
+            try {
+                let after = [];
+                try { after = await getFromIndex('sessions', 'caseId', stateManager.currentCaseId); } catch (err) { after = []; }
+                const sortedAfter = [...after].sort((a,b)=>{ if(!a.sessionDate) return 1; if(!b.sessionDate) return -1; return new Date(a.sessionDate)-new Date(b.sessionDate); });
+                const selectedId = sessionId ? sessionId : newSessionData.id;
+                const listEl = document.getElementById('sessions-sidebar-list');
+                if (listEl) {
+                    const html = sortedAfter.map(s => `
+                        <div class="flex items-center gap-2">
+                            <button class="session-item-btn flex-1 text-right px-3 py-2 rounded ${selectedId===s.id?'bg-blue-200':'bg-blue-50 hover:bg-blue-100'} border border-blue-200 flex justify-between items-center" data-session-id="${s.id}">
+                                <span class="font-semibold">${s.sessionDate || 'غير محدد'}</span>
+                                <i class="ri-arrow-left-s-line"></i>
+                            </button>
+                            <button class="delete-session-inline px-2 py-2 text-red-600 hover:text-red-700" data-session-id="${s.id}">
+                                <i class="ri-delete-bin-line"></i>
+                            </button>
+                        </div>
+                    `).join('');
+                    listEl.innerHTML = html || '<div class="text-gray-500 text-sm">لا توجد جلسات</div>';
+                    const header = listEl.parentElement ? listEl.parentElement.querySelector('h3') : null;
+                    if (header) header.textContent = `الجلسات (${sortedAfter.length})`;
+                    listEl.querySelectorAll('.session-item-btn').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            const sid = parseInt(e.currentTarget.dataset.sessionId, 10);
+                            const s = await getById('sessions', sid);
+                            navigateTo(displaySessionForm, sid, s);
+                        });
+                    });
+                    listEl.querySelectorAll('.delete-session-inline').forEach(btn => {
+                        btn.addEventListener('click', async (e) => {
+                            e.stopPropagation();
+                            const sid = parseInt(e.currentTarget.dataset.sessionId, 10);
+                            const ok = confirm('هل أنت متأكد من حذف هذه الجلسة؟');
+                            if (!ok) return;
+                            try {
+                                const isCurrent = !!selectedId && sid === selectedId;
+                                await deleteRecord('sessions', sid);
+                                showToast('تم حذف الجلسة بنجاح.');
+                                await updateCountersInHeader();
+                                document.dispatchEvent(new CustomEvent('sessionSaved'));
+                                let after2 = [];
+                                try { after2 = await getFromIndex('sessions', 'caseId', stateManager.currentCaseId); } catch (err) { after2 = []; }
+                                const sorted2 = [...after2].sort((a,b)=>{ if(!a.sessionDate) return 1; if(!b.sessionDate) return -1; return new Date(a.sessionDate)-new Date(b.sessionDate); });
+                                const pickId = (isCurrent ? null : selectedId) || (sorted2[0]?.id || null);
+                                if (pickId) {
+                                    const data = await getById('sessions', pickId);
+                                    replaceCurrentView(displaySessionForm, pickId, data);
+                                } else {
+                                    replaceCurrentView(displaySessionForm, null, null);
+                                }
+                            } catch (err) {
+                                showToast('حدث خطأ أثناء الحذف.');
+                            }
+                        });
+                    });
+                }
+            } catch (e) {}
+            if (sessionId) {
+                const s = await getById('sessions', sessionId);
+                replaceCurrentView(displaySessionForm, sessionId, s);
+            } else {
+                if (newSessionData.id) {
+                    const s = await getById('sessions', newSessionData.id);
+                    replaceCurrentView(displaySessionForm, newSessionData.id, s);
+                } else {
+                    replaceCurrentView(displaySessionForm, null, null);
+                }
+            }
             return;
         }
 

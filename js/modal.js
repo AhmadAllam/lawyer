@@ -48,6 +48,50 @@ function navigateBack() {
     const modalTitleEl = document.getElementById('modal-title');
     const modalTitle = modalTitleEl ? modalTitleEl.textContent || '' : '';
 
+    const clientDetailsFlag = document.getElementById('client-cases-list');
+    if (clientDetailsFlag && window.location.pathname.includes('search.html')) {
+        closeModal();
+        return;
+    }
+
+    const caseDetailsFormEl = document.getElementById('case-details-form');
+    if (caseDetailsFormEl && window.location.pathname.includes('search.html')) {
+        if (typeof replaceCurrentView === 'function' && typeof displayNewCaseForm === 'function') {
+            replaceCurrentView(displayNewCaseForm);
+            return;
+        } else if (typeof displayNewCaseForm === 'function') {
+            stateManager.pushToModalHistory({ func: displayNewCaseForm, args: [] });
+            displayNewCaseForm();
+            return;
+        }
+    }
+
+    const partyFormEl = document.getElementById('party-details-form');
+    if (partyFormEl && window.location.pathname.includes('search.html')) {
+        if (typeof replaceCurrentView === 'function' && typeof displayClientViewForm === 'function' && stateManager.selectedClientId) {
+            replaceCurrentView(displayClientViewForm, stateManager.selectedClientId);
+            return;
+        } else if (typeof displayClientViewForm === 'function' && stateManager.selectedClientId) {
+            stateManager.pushToModalHistory({ func: displayClientViewForm, args: [stateManager.selectedClientId] });
+            displayClientViewForm(stateManager.selectedClientId);
+            return;
+        } else {
+            closeModal();
+            return;
+        }
+    }
+
+    if (modalTitle.includes('جلسات الدعوى الجديده')) {
+        if (typeof replaceCurrentView === 'function' && typeof displayCaseDetailsForm === 'function') {
+            replaceCurrentView(displayCaseDetailsForm);
+            return;
+        } else if (typeof displayCaseDetailsForm === 'function') {
+            stateManager.pushToModalHistory({ func: displayCaseDetailsForm, args: [] });
+            displayCaseDetailsForm();
+            return;
+        }
+    }
+
     // حالات خاصة معروفة
     if (modalTitle.includes('تعديل بيانات الدعوى')) {
         stateManager.setModalHistory([]);
