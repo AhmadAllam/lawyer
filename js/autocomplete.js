@@ -21,7 +21,7 @@ function setupAutocomplete(inputId, resultsContainerId, sourceFunction, onSelect
             filteredItems.forEach(item => {
                 const div = document.createElement('div');
                 div.textContent = item.name;
-                div.className = 'autocomplete-item text-right';
+                div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
                 div.addEventListener('click', () => {
                     onSelect(item);
                     input.value = item.name;

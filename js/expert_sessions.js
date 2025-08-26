@@ -387,6 +387,181 @@ function attachExpertSessionFormListeners(sessionId) {
     const form = document.getElementById('expert-session-form');
     const cancelBtn = document.getElementById('cancel-session-btn');
     
+    const clientInput = document.getElementById('client-name');
+    const clientDropdown = document.getElementById('client-name-dropdown');
+    const hiddenClient = document.getElementById('client-select');
+    if (clientInput && clientDropdown && hiddenClient) {
+        setupAutocomplete('client-name', 'client-name-dropdown', async () => {
+            const clients = await getAllClients();
+            return clients.map(c => ({id: c.id, name: c.name}));
+        }, (item) => {
+            hiddenClient.value = item ? item.id : '';
+        });
+        const toggleBtn = document.getElementById('client-name-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', async () => {
+                if (clientDropdown.classList.contains('hidden')) {
+                    const clients = await getAllClients();
+                    clientDropdown.innerHTML = '';
+                    if (clients.length > 0) {
+                        clients.forEach(client => {
+                            const div = document.createElement('div');
+                            div.textContent = client.name;
+                            div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+                            div.addEventListener('click', () => {
+                                hiddenClient.value = client.id;
+                                clientInput.value = client.name;
+                                clientDropdown.innerHTML = '';
+                                clientDropdown.classList.add('hidden');
+                            });
+                            clientDropdown.appendChild(div);
+                        });
+                        clientDropdown.classList.remove('hidden');
+                    }
+                } else {
+                    clientDropdown.classList.add('hidden');
+                }
+            });
+        }
+    }
+    
+    const expertNameInput = document.getElementById('expert-name-display');
+    const expertNameDropdown = document.getElementById('expert-name-dropdown');
+    const hiddenExpertName = document.getElementById('expert-name');
+    if (expertNameInput && expertNameDropdown && hiddenExpertName) {
+        setupAutocomplete('expert-name-display', 'expert-name-dropdown', async () => {
+            const sessions = await getAllExpertSessions();
+            const names = [...new Set((sessions || []).map(s => s.expertName).filter(Boolean))];
+            return names.map(n => ({ id: n, name: n }));
+        }, (item) => {
+            if (item) hiddenExpertName.value = item.name; else hiddenExpertName.value = '';
+        });
+        expertNameInput.addEventListener('input', () => {
+            hiddenExpertName.value = expertNameInput.value.trim();
+        });
+        const expertToggle = document.getElementById('expert-name-toggle');
+        if (expertToggle) {
+            expertToggle.addEventListener('click', async () => {
+                if (expertNameDropdown.classList.contains('hidden')) {
+                    const sessions = await getAllExpertSessions();
+                    const names = [...new Set((sessions || []).map(s => s.expertName).filter(Boolean))];
+                    expertNameDropdown.innerHTML = '';
+                    names.forEach(n => {
+                        const div = document.createElement('div');
+                        div.textContent = n;
+                        div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+                        div.addEventListener('click', () => {
+                            hiddenExpertName.value = n;
+                            expertNameInput.value = n;
+                            expertNameDropdown.innerHTML = '';
+                            expertNameDropdown.classList.add('hidden');
+                        });
+                        expertNameDropdown.appendChild(div);
+                    });
+                    if (names.length > 0) expertNameDropdown.classList.remove('hidden');
+                } else {
+                    expertNameDropdown.classList.add('hidden');
+                }
+            });
+        }
+    }
+    
+    const sessionTypeInput = document.getElementById('session-type-display');
+    const sessionTypeDropdown = document.getElementById('session-type-dropdown');
+    const hiddenSessionType = document.getElementById('session-type');
+    if (sessionTypeInput && sessionTypeDropdown && hiddenSessionType) {
+    const defaultTypes = ['معاينة','تقديم مستندات','مناقشة','تقرير خبير','أخرى'];
+    setupAutocomplete('session-type-display', 'session-type-dropdown', async () => {
+    const [expertSessions, normalSessions] = await Promise.all([
+    getAllExpertSessions(),
+    getAllSessions()
+    ]);
+    const usedExpert = [...new Set((expertSessions || []).map(s => s.sessionType).filter(Boolean))];
+    const usedNormal = [...new Set((normalSessions || []).map(s => s.sessionType).filter(Boolean))];
+    const all = [...new Set([...defaultTypes, ...usedExpert, ...usedNormal])];
+    return all.map(n => ({ id: n, name: n }));
+    }, (item) => {
+    hiddenSessionType.value = item ? item.name : '';
+    });
+    sessionTypeInput.addEventListener('input', () => {
+    hiddenSessionType.value = sessionTypeInput.value.trim();
+    });
+    const stToggle = document.getElementById('session-type-toggle');
+    if (stToggle) {
+    stToggle.addEventListener('click', async () => {
+    if (sessionTypeDropdown.classList.contains('hidden')) {
+    const [expertSessions, normalSessions] = await Promise.all([
+    getAllExpertSessions(),
+    getAllSessions()
+    ]);
+    const usedExpert = [...new Set((expertSessions || []).map(s => s.sessionType).filter(Boolean))];
+    const usedNormal = [...new Set((normalSessions || []).map(s => s.sessionType).filter(Boolean))];
+    const all = [...new Set([...defaultTypes, ...usedExpert, ...usedNormal])];
+    sessionTypeDropdown.innerHTML = '';
+    all.forEach(n => {
+    const div = document.createElement('div');
+    div.textContent = n;
+    div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+    div.addEventListener('click', () => {
+    hiddenSessionType.value = n;
+    sessionTypeInput.value = n;
+    sessionTypeDropdown.innerHTML = '';
+    sessionTypeDropdown.classList.add('hidden');
+    });
+    sessionTypeDropdown.appendChild(div);
+    });
+    if (all.length > 0) sessionTypeDropdown.classList.remove('hidden');
+    } else {
+    sessionTypeDropdown.classList.add('hidden');
+    }
+    });
+    }
+    }
+    
+    const statusInput = document.getElementById('status-display');
+    const statusDropdown = document.getElementById('status-dropdown');
+    const hiddenStatus = document.getElementById('status');
+    if (statusInput && statusDropdown && hiddenStatus) {
+        const defaultStatuses = ['مجدولة','تمت','ملغية'];
+        setupAutocomplete('status-display', 'status-dropdown', async () => {
+            const sessions = await getAllExpertSessions();
+            const used = [...new Set((sessions || []).map(s => s.status).filter(Boolean))];
+            const all = [...new Set([...defaultStatuses, ...used])];
+            return all.map(n => ({ id: n, name: n }));
+        }, (item) => {
+            hiddenStatus.value = item ? item.name : '';
+        });
+        statusInput.addEventListener('input', () => {
+            hiddenStatus.value = statusInput.value.trim();
+        });
+        const stToggle2 = document.getElementById('status-toggle');
+        if (stToggle2) {
+            stToggle2.addEventListener('click', async () => {
+                if (statusDropdown.classList.contains('hidden')) {
+                    const sessions = await getAllExpertSessions();
+                    const used = [...new Set((sessions || []).map(s => s.status).filter(Boolean))];
+                    const all = [...new Set([...defaultStatuses, ...used])];
+                    statusDropdown.innerHTML = '';
+                    all.forEach(n => {
+                        const div = document.createElement('div');
+                        div.textContent = n;
+                        div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+                        div.addEventListener('click', () => {
+                            hiddenStatus.value = n;
+                            statusInput.value = n;
+                            statusDropdown.innerHTML = '';
+                            statusDropdown.classList.add('hidden');
+                        });
+                        statusDropdown.appendChild(div);
+                    });
+                    if (all.length > 0) statusDropdown.classList.remove('hidden');
+                } else {
+                    statusDropdown.classList.add('hidden');
+                }
+            });
+        }
+    }
+
     // حفظ النموذج
     if (form) {
         form.addEventListener('submit', (e) => {
@@ -407,17 +582,33 @@ function attachExpertSessionFormListeners(sessionId) {
 async function handleSaveExpertSession(e, sessionId) {
     e.preventDefault();
     const form = e.target;
+    const expertNameDisplay = document.getElementById('expert-name-display');
+    const hiddenExpertName = document.getElementById('expert-name');
+    if (expertNameDisplay && hiddenExpertName) hiddenExpertName.value = expertNameDisplay.value.trim();
+    const sessionTypeDisplay = document.getElementById('session-type-display');
+    const hiddenSessionType = document.getElementById('session-type');
+    if (sessionTypeDisplay && hiddenSessionType) hiddenSessionType.value = sessionTypeDisplay.value.trim();
+    const statusDisplay = document.getElementById('status-display');
+    const hiddenStatus = document.getElementById('status');
+    if (statusDisplay && hiddenStatus) hiddenStatus.value = statusDisplay.value.trim();
     const formData = new FormData(form);
     const sessionData = Object.fromEntries(formData.entries());
     
-    // تحويل البيانات للأنواع الصحيحة
-    sessionData.clientId = parseInt(sessionData.clientId);
-    
-    // التحقق من البيانات المطلوبة
-    if (!sessionData.clientId || !sessionData.sessionType) {
+    let clientId = parseInt(sessionData.clientId);
+    if (!clientId) {
+        const clientNameInput = document.getElementById('client-name');
+        if (clientNameInput && clientNameInput.value.trim()) {
+            const clientName = clientNameInput.value.trim();
+            clientId = await addClient({ name: clientName });
+            const hiddenClient = document.getElementById('client-select');
+            if (hiddenClient) hiddenClient.value = String(clientId);
+        }
+    }
+    if (!clientId || !sessionData.sessionType) {
         showToast('يرجى ملء الحقول المطلوبة: الموكل، نوع الجلسة', 'error');
         return;
     }
+    sessionData.clientId = clientId;
     
     try {
         if (sessionId) {

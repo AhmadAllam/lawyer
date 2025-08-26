@@ -773,6 +773,7 @@ async function displayAdministrativeForm(workId = null) {
         
         // جلب جميع الموكلين
         const clients = await getAllClients();
+        const prefillClientName = work ? (work.clientName || (work.clientId ? (clients.find(c => c.id === work.clientId)?.name || '') : '')) : '';
         
         document.getElementById('modal-title').textContent = isEdit ? 'تعديل العمل الإداري' : 'إضافة عمل إداري جديد';
         const modalContent = document.getElementById('modal-content');
@@ -814,23 +815,27 @@ async function displayAdministrativeForm(workId = null) {
                             <div>
                                 <div class="flex items-stretch">
                                     <label for="task" class="px-3 py-2 border-2 border-indigo-300 bg-indigo-50 text-sm font-bold text-indigo-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">العمل المطلوب</label>
-                                    <input type="text" id="task" class="flex-1 px-4 py-3 text-base bg-white border-2 border-indigo-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-medium -mr-px" 
-                                           value="${work ? work.task || '' : ''}" placeholder="اكتب وصف العمل المطلوب..." required>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="task" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-indigo-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 font-medium" value="${work ? work.task || '' : ''}" placeholder="اكتب وصف العمل المطلوب..." required>
+                                        <button type="button" id="task-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        </button>
+                                        <div id="task-dropdown" class="autocomplete-results hidden"></div>
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- الموكل -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
-                                    <select id="client-select" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 -mr-px">
-                                        <option value="">عمل عام (بدون موكل محدد)</option>
-                                        ${clients.map(client => `
-                                            <option value="${client.id}" ${work && work.clientId === client.id ? 'selected' : ''}>
-                                                ${client.name}
-                                            </option>
-                                        `).join('')}
-                                    </select>
+                                    <label for="client-name" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="client-name" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="${prefillClientName}" placeholder="اكتب اسم الموكل (اختياري)">
+                                        <button type="button" id="client-name-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        </button>
+                                        <div id="client-name-dropdown" class="autocomplete-results hidden"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -855,8 +860,13 @@ async function displayAdministrativeForm(workId = null) {
                             <div>
                                 <div class="flex items-stretch">
                                     <label for="location" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">مكان العمل</label>
-                                    <input type="text" id="location" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 -mr-px"
-                                           value="${work ? work.location || '' : ''}" placeholder="مكان إتمام العمل...">
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="location" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500" value="${work ? work.location || '' : ''}" placeholder="مكان إتمام العمل...">
+                                        <button type="button" id="location-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                                            <i class="ri-arrow-down-s-line"></i>
+                                        </button>
+                                        <div id="location-dropdown" class="autocomplete-results hidden"></div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -995,12 +1005,74 @@ async function displayAdministrativeForm(workId = null) {
         });
         
         document.getElementById('cancel-administrative-btn').addEventListener('click', () => {
-            const clientSelect = document.getElementById('client-select');
-            if (clientSelect && clientSelect.value) {
-                sessionStorage.setItem('expandedAdministrativeClientId', clientSelect.value);
-            }
+            sessionStorage.setItem('expandedAdministrativeClientId', 'general');
             navigateBack();
         });
+        try {
+            const input = document.getElementById('client-name');
+            const dropdown = document.getElementById('client-name-dropdown');
+            const toggle = document.getElementById('client-name-toggle');
+            if (input && dropdown) {
+                setupAutocomplete('client-name', 'client-name-dropdown', async () => await getAllClients(), () => {});
+                if (toggle) {
+                    toggle.addEventListener('click', async (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!dropdown.classList.contains('hidden')) { dropdown.classList.add('hidden'); return; }
+                        const items = await getAllClients();
+                        const list = (items || []).map(i => i.name).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ar'));
+                        dropdown.innerHTML = list.map(v => `<div class="autocomplete-item">${v}</div>`).join('');
+                        dropdown.classList.remove('hidden');
+                    });
+                }
+                dropdown.addEventListener('click', (e) => {
+                    const item = e.target.closest('.autocomplete-item');
+                    if (!item) return;
+                    input.value = item.textContent || '';
+                    dropdown.classList.add('hidden');
+                });
+                document.addEventListener('click', (e) => {
+                    if (e.target === input || e.target === toggle || (e.target.closest && e.target.closest('#client-name-dropdown'))) return;
+                    dropdown.classList.add('hidden');
+                });
+            }
+        } catch (_) {}
+        try {
+            const adminList = await getAllAdministrative();
+            const uniq = (arr) => Array.from(new Set((arr || []).filter(Boolean)));
+            const tasksList = uniq(adminList.map(x => x.task));
+            const locsList = uniq(adminList.map(x => x.location));
+            const setupCombo = (inputId, dropdownId, toggleId, items) => {
+                const input = document.getElementById(inputId);
+                const dropdown = document.getElementById(dropdownId);
+                const toggle = document.getElementById(toggleId);
+                if (!input || !dropdown) return;
+                const objects = (items || []).map(v => ({ name: String(v) }));
+                setupAutocomplete(inputId, dropdownId, async () => objects, () => {});
+                if (toggle) {
+                    toggle.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (!dropdown.classList.contains('hidden')) { dropdown.classList.add('hidden'); return; }
+                        const list = (items || []).map(v => String(v)).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ar'));
+                        dropdown.innerHTML = list.map(v => `<div class="autocomplete-item">${v}</div>`).join('');
+                        dropdown.classList.remove('hidden');
+                    });
+                }
+                dropdown.addEventListener('click', (e) => {
+                    const item = e.target.closest('.autocomplete-item');
+                    if (!item) return;
+                    input.value = item.textContent || '';
+                    dropdown.classList.add('hidden');
+                });
+                document.addEventListener('click', (e) => {
+                    if (e.target === input || e.target === toggle || (e.target.closest && e.target.closest(`#${dropdownId}`))) return;
+                    dropdown.classList.add('hidden');
+                });
+            };
+            setupCombo('task', 'task-dropdown', 'task-toggle', tasksList);
+            setupCombo('location', 'location-dropdown', 'location-toggle', locsList);
+        } catch (_) {}
         
     } catch (error) {
         showToast('حدث خطأ في عرض النموذج', 'error');
@@ -1010,7 +1082,7 @@ async function displayAdministrativeForm(workId = null) {
 // حفظ العمل الإداري
 async function saveAdministrative(workId = null) {
     try {
-        const clientId = document.getElementById('client-select').value || null;
+        const clientName = document.getElementById('client-name').value.trim();
         const task = document.getElementById('task').value.trim();
         const dueDate = document.getElementById('due-date').value;
         const location = document.getElementById('location').value.trim();
@@ -1023,7 +1095,8 @@ async function saveAdministrative(workId = null) {
         }
         
         const workData = {
-            clientId: clientId ? parseInt(clientId) : null,
+            clientId: null,
+            clientName: clientName || null,
             task,
             dueDate,
             location: location || null,
@@ -1037,11 +1110,7 @@ async function saveAdministrative(workId = null) {
             await updateById('administrative', workId, workData);
             showToast('تم تحديث العمل بنجاح', 'success');
             
-            if (workData.clientId) {
-                sessionStorage.setItem('expandedAdministrativeClientId', workData.clientId);
-            } else {
-                sessionStorage.setItem('expandedAdministrativeClientId', 'general');
-            }
+            sessionStorage.setItem('expandedAdministrativeClientId', 'general');
         } else {
             await addToStore('administrative', workData);
             showToast('تم حفظ ال��مل بنجاح', 'success');

@@ -682,25 +682,26 @@ async function displayAccountForm(accountId = null) {
                             <!-- الموكل -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
-                                    <select id="client-select" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 -mr-px" required>
-                                        <option value="">اختر الموكل</option>
-                                        ${clients.map(client => `
-                                            <option value="${client.id}" ${account && account.clientId === client.id ? 'selected' : ''}>
-                                                ${client.name}
-                                            </option>
-                                        `).join('')}
-                                    </select>
+                                    <label for="client-name" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="client-name" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${account ? ((clients.find(c=>c.id===account.clientId)||{}).name||'') : ''}" placeholder="اكتب أو اختر الموكل" required>
+                                        <button type="button" id="client-name-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="client-name-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="client-select" value="${account ? account.clientId || '' : ''}">
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- القضية -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="case-select" class="px-3 py-2 border-2 border-green-300 bg-green-50 text-sm font-bold text-green-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">القضية</label>
-                                    <select id="case-select" class="flex-1 px-4 py-3 text-base bg-white border-2 border-green-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-medium -mr-px" required>
-                                        <option value="">اختر القضية</option>
-                                    </select>
+                                    <label for="case-display" class="px-3 py-2 border-2 border-green-300 bg-green-50 text-sm font-bold text-green-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">القضية</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="case-display" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-green-300 rounded-l-lg focus:ring-2 focus:ring-green-500 focus:border-green-500 font-medium placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="" placeholder="اكتب أو اختر القضية">
+                                        <button type="button" id="case-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="case-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="case-select" value="${account ? account.caseId || '' : ''}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -880,6 +881,110 @@ async function displayAccountForm(accountId = null) {
             if(dateInput){ dateInput.addEventListener('blur', tryNormalizeManual); dateInput.addEventListener('change', tryNormalizeManual); }
         })();
         
+        try {
+            const hiddenClient = document.getElementById('client-select');
+            const clientInput = document.getElementById('client-name');
+            const clientDropdown = document.getElementById('client-name-dropdown');
+            const clientToggle = document.getElementById('client-name-toggle');
+            const hiddenCase = document.getElementById('case-select');
+            const caseInput = document.getElementById('case-display');
+            const caseDropdown = document.getElementById('case-dropdown');
+            const caseToggle = document.getElementById('case-toggle');
+
+            if (clientInput && clientDropdown && hiddenClient) {
+                setupAutocomplete('client-name','client-name-dropdown', async () => (clients || []).map(c => ({id:c.id, name:c.name})), (item) => {
+                    hiddenClient.value = item ? item.id : '';
+                    if (!item) { if (hiddenCase) hiddenCase.value = ''; if (caseInput) caseInput.value = ''; }
+                    if (hiddenClient) hiddenClient.dispatchEvent(new Event('change'));
+                });
+                if (clientToggle) {
+                    clientToggle.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation();
+                        if (!clientDropdown.classList.contains('hidden')) { clientDropdown.classList.add('hidden'); return; }
+                        const list = (clients || []).map(c => c.name).filter(Boolean).sort((a,b)=>a.localeCompare(b,'ar'));
+                        clientDropdown.innerHTML = list.map(v => `<div class="autocomplete-item text-right text-base font-semibold text-gray-900">${v}</div>`).join('');
+                        clientDropdown.classList.remove('hidden');
+                    });
+                }
+                clientInput.addEventListener('input', () => { hiddenClient.value = ''; if (hiddenCase) hiddenCase.value=''; if (caseInput) caseInput.value=''; });
+                clientDropdown.addEventListener('click', (e) => {
+                    const el = e.target.closest('.autocomplete-item'); if (!el) return;
+                    const item = (clients || []).find(c => c.name === el.textContent);
+                    if (item) { clientInput.value = item.name; hiddenClient.value = item.id; hiddenClient.dispatchEvent(new Event('change')); }
+                    clientDropdown.classList.add('hidden');
+                });
+                document.addEventListener('click', (e) => {
+                    if (e.target === clientInput || e.target === clientToggle || (e.target.closest && e.target.closest('#client-name-dropdown'))) return;
+                    clientDropdown.classList.add('hidden');
+                });
+            }
+
+            const getCaseLabel = (c) => `${c.caseNumber}/${c.caseYear}${c.type ? ' - ' + c.type : ''}`;
+
+            if (caseInput && caseDropdown && hiddenCase) {
+                const sourceCases = async () => {
+                    const cid = parseInt(hiddenClient?.value||''); if (!cid) return [];
+                    const arr = await getFromIndex('cases','clientId', cid);
+                    return (arr || []).map(c => ({ id: c.id, name: getCaseLabel(c) }));
+                };
+                setupAutocomplete('case-display','case-dropdown', sourceCases, (item) => {
+                    hiddenCase.value = item ? item.id : '';
+                });
+                if (caseToggle) {
+                    caseToggle.addEventListener('click', async (e) => {
+                        e.preventDefault(); e.stopPropagation();
+                        if (!caseDropdown.classList.contains('hidden')) { caseDropdown.classList.add('hidden'); return; }
+                        const cid = parseInt(hiddenClient?.value||''); if (!cid) { caseDropdown.innerHTML = ''; return; }
+                        const arr = await getFromIndex('cases','clientId', cid);
+                        const list = (arr || []).map(getCaseLabel);
+                        caseDropdown.innerHTML = list.map(v => `<div class="autocomplete-item text-right text-base font-semibold text-gray-900">${v}</div>`).join('');
+                        caseDropdown.classList.remove('hidden');
+                    });
+                }
+                caseInput.addEventListener('input', () => { hiddenCase.value=''; });
+                caseDropdown.addEventListener('click', async (e) => {
+                    const el = e.target.closest('.autocomplete-item'); if (!el) return;
+                    const cid = parseInt(hiddenClient?.value||''); if (!cid) return;
+                    const arr = await getFromIndex('cases','clientId', cid);
+                    const cc = (arr || []).find(c => getCaseLabel(c) === el.textContent);
+                    if (cc) { caseInput.value = getCaseLabel(cc); hiddenCase.value = cc.id; }
+                    caseDropdown.classList.add('hidden');
+                });
+                document.addEventListener('click', (e) => {
+                    if (e.target === caseInput || e.target === caseToggle || (e.target.closest && e.target.closest('#case-dropdown'))) return;
+                    caseDropdown.classList.add('hidden');
+                });
+            }
+
+            if (hiddenClient?.value) {
+                try {
+                    const existingClient = (clients || []).find(c => c.id === parseInt(hiddenClient.value));
+                    if (existingClient && clientInput) clientInput.value = existingClient.name || '';
+                } catch (_) {}
+            }
+            if (hiddenCase?.value) {
+                try {
+                    const c = await getById('cases', parseInt(hiddenCase.value));
+                    if (c && caseInput) caseInput.value = getCaseLabel(c);
+                } catch (_) {}
+            }
+        } catch (_) {}
+        
+        (function(){
+            const inputIds = ['client-name','case-display','payment-date','paid-fees','expenses','remaining','notes'];
+            inputIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (!el) return;
+                el.classList.add('min-h-[48px]','font-semibold','text-gray-900');
+                el.className = el.className.replace(/py-\d+/g,'py-3');
+            });
+            const labelIds = ['client-name','case-display','payment-date','paid-fees','expenses','remaining','notes'];
+            labelIds.forEach(f => {
+                const lab = document.querySelector(`label[for="${f}"]`);
+                if (!lab) return;
+                lab.className = lab.className.replace(/py-\d+/g,'py-3');
+            });
+        })();
+        
         // إضافة مستمعي الأحداث
         attachAccountFormListeners(accountId);
         
@@ -921,7 +1026,9 @@ function attachAccountFormListeners(accountId) {
         if (clientId) {
             await loadCasesForClient(clientId);
         } else {
-            caseSelect.innerHTML = '<option value="">اختر القضية</option>';
+            caseSelect.value = '';
+            const caseInput = document.getElementById('case-display');
+            if (caseInput) caseInput.value = '';
         }
     });
     
@@ -947,20 +1054,19 @@ function attachAccountFormListeners(accountId) {
 async function loadCasesForClient(clientId, selectedCaseId = null) {
     try {
         const cases = await getFromIndex('cases', 'clientId', clientId);
-        const caseSelect = document.getElementById('case-select');
-        
-        caseSelect.innerHTML = '<option value="">اختر القضية</option>';
-        
-        cases.forEach(caseRecord => {
-            const option = document.createElement('option');
-            option.value = caseRecord.id;
-            option.textContent = `قضية رقم ${caseRecord.caseNumber}/${caseRecord.caseYear}${caseRecord.type ? ' - ' + caseRecord.type : ''}`;
-            if (selectedCaseId && selectedCaseId === caseRecord.id) {
-                option.selected = true;
+        const hiddenCase = document.getElementById('case-select');
+        const caseInput = document.getElementById('case-display');
+        const getCaseLabel = (c) => `قضية رقم ${c.caseNumber}/${c.caseYear}${c.type ? ' - ' + c.type : ''}`;
+        if (selectedCaseId) {
+            const found = cases.find(c => c.id === selectedCaseId);
+            if (found) {
+                if (hiddenCase) hiddenCase.value = found.id;
+                if (caseInput) caseInput.value = getCaseLabel(found);
             }
-            caseSelect.appendChild(option);
-        });
-        
+        } else {
+            if (hiddenCase) hiddenCase.value = '';
+            if (caseInput) caseInput.value = '';
+        }
     } catch (error) {
         showToast('حدث خطأ في تحميل القضايا', 'error');
     }
@@ -969,7 +1075,16 @@ async function loadCasesForClient(clientId, selectedCaseId = null) {
 // حفظ الحساب
 async function handleSaveAccount(accountId) {
     try {
-        const clientId = parseInt(document.getElementById('client-select').value);
+        let clientId = parseInt(document.getElementById('client-select').value);
+        const clientNameInput = document.getElementById('client-name');
+        const clientName = clientNameInput ? clientNameInput.value.trim() : '';
+        if ((!clientId || isNaN(clientId)) && clientName) {
+            try {
+                clientId = await addClient({ name: clientName });
+                const hiddenClient = document.getElementById('client-select');
+                if (hiddenClient) hiddenClient.value = String(clientId);
+            } catch (e) {}
+        }
         const caseId = parseInt(document.getElementById('case-select').value);
         const rawPaymentDate = document.getElementById('payment-date').value;
         const paymentDate = (function(s){ const m = s && s.trim().match(/^(\d{1,2})\D+(\d{1,2})\D+(\d{2,4})$/); if(m){ let d=parseInt(m[1],10), mo=parseInt(m[2],10), y=parseInt(m[3],10); if(m[3].length===2){ y = y<50?2000+y:1900+y; } const dt=new Date(y,mo-1,d); if(dt.getFullYear()===y && dt.getMonth()===mo-1 && dt.getDate()===d){ const p=n=>n.toString().padStart(2,'0'); return `${y}-${p(mo)}-${p(d)}`; } } return s; })(rawPaymentDate);
@@ -978,14 +1093,14 @@ async function handleSaveAccount(accountId) {
         const remaining = parseFloat(document.getElementById('remaining').value) || 0;
         const notes = document.getElementById('notes').value.trim();
         
-        if (!clientId || !caseId || !paymentDate) {
+        if (!clientId || !paymentDate) {
             showToast('يرجى ملء جميع الحقول المطلوبة', 'error');
             return;
         }
         
         const accountData = {
             clientId,
-            caseId,
+            caseId: (isNaN(caseId) ? null : caseId),
             paymentDate,
             paidFees,
             expenses,

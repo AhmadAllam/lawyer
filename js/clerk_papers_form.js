@@ -24,26 +24,26 @@ function displayClerkPaperForm(paperId = null) {
                             <!-- الموكل -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
-                                    <select id="client-select" name="clientId" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 -mr-px">
-                                        <option value="">اختر الموكل</option>
-                                        ${clients.map(client => `
-                                            <option value="${client.id}" ${paperData.clientId === client.id ? 'selected' : ''}>${client.name}</option>
-                                        `).join('')}
-                                    </select>
+                                    <label for="client-name" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="client-name" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${paperData.clientId ? ((clients.find(c=>c.id===paperData.clientId)||{}).name||'') : ''}" placeholder="اكتب أو اختر الموكل" required>
+                                        <button type="button" id="client-name-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="client-name-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="client-select" name="clientId" value="${paperData.clientId || ''}">
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- نوع الورقة -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="paper-type" class="px-3 py-2 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-blue-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الورقة</label>
-                                    <select id="paper-type" name="paperType" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-blue-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 font-medium -mr-px">
-                                        <option value="">اختر نوع الورقة</option>
-                                        <option value="إنذار" ${paperData.paperType === 'إنذار' ? 'selected' : ''}>إنذار</option>
-                                        <option value="إعلان" ${paperData.paperType === 'إعلان' ? 'selected' : ''}>إعلان</option>
-                                        <option value="أخرى" ${paperData.paperType === 'أخرى' ? 'selected' : ''}>أخرى</option>
-                                    </select>
+                                    <label for="paper-type-name" class="px-3 py-2 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-blue-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الورقة</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="paper-type-name" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-blue-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${paperData.paperType || ''}" placeholder="اكتب أو اختر نوع الورقة" required>
+                                        <button type="button" id="paper-type-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="paper-type-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="paper-type" name="paperType" value="${paperData.paperType || ''}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -61,8 +61,13 @@ function displayClerkPaperForm(paperId = null) {
                             <!-- قلم المحضرين -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="clerk-office" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">قلم المحضرين</label>
-                                    <input type="text" id="clerk-office" name="clerkOffice" value="${paperData.clerkOffice || ''}" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 -mr-px">
+                                    <label for="clerk-office-name" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">قلم المحضرين</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="clerk-office-name" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${paperData.clerkOffice || ''}" placeholder="اكتب أو اختر قلم المحضرين">
+                                        <button type="button" id="clerk-office-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="clerk-office-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="clerk-office" name="clerkOffice" value="${paperData.clerkOffice || ''}">
+                                    </div>
                                 </div>
                             </div>
                         </div>

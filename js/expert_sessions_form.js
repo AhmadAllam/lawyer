@@ -24,21 +24,26 @@ function displayExpertSessionForm(sessionId = null) {
                             <!-- الموكل -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="client-select" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
-                                    <select id="client-select" name="clientId" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 -mr-px">
-                                        <option value="">اختر الموكل</option>
-                                        ${clients.map(client => `
-                                            <option value="${client.id}" ${sessionData.clientId === client.id ? 'selected' : ''}>${client.name}</option>
-                                        `).join('')}
-                                    </select>
+                                    <label for="client-name" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الموكل</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="client-name" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${sessionData.clientId ? ((clients.find(c=>c.id===sessionData.clientId)||{}).name||'') : ''}" placeholder="اكتب أو اختر الموكل" required>
+                                        <button type="button" id="client-name-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="client-name-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="client-select" name="clientId" value="${sessionData.clientId || ''}">
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- اسم الخبير -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="expert-name" class="px-3 py-2 border-2 border-purple-300 bg-purple-50 text-sm font-bold text-purple-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">اسم الخبير</label>
-                                    <input type="text" id="expert-name" name="expertName" value="${sessionData.expertName || ''}" class="flex-1 px-4 py-3 text-base bg-white border-2 border-purple-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 font-medium -mr-px">
+                                    <label for="expert-name-display" class="px-3 py-2 border-2 border-purple-300 bg-purple-50 text-sm font-bold text-purple-800 shrink-0 w-28 md:w-32 text-right rounded-r-lg">اسم الخبير</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="expert-name-display" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-purple-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${sessionData.expertName || ''}" placeholder="اكتب أو اختر اسم الخبير">
+                                        <button type="button" id="expert-name-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="expert-name-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="expert-name" name="expertName" value="${sessionData.expertName || ''}">
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -48,20 +53,26 @@ function displayExpertSessionForm(sessionId = null) {
                             <!-- نوع الجلسة -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="session-type" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الجلسة</label>
-                                    <input type="text" id="session-type" name="sessionType" value="${sessionData.sessionType || ''}" required class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 -mr-px">
+                                    <label for="session-type-display" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الجلسة</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="session-type-display" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${sessionData.sessionType || ''}" placeholder="اكتب أو اختر نوع الجلسة">
+                                        <button type="button" id="session-type-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="session-type-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="session-type" name="sessionType" value="${sessionData.sessionType || ''}">
+                                    </div>
                                 </div>
                             </div>
                             
                             <!-- الحالة -->
                             <div>
                                 <div class="flex items-stretch">
-                                    <label for="status" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الحالة</label>
-                                    <select id="status" name="status" class="flex-1 px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 -mr-px">
-                                        <option value="مجدولة" ${sessionData.status === 'مج��ولة' ? 'selected' : ''}>مجدولة</option>
-                                        <option value="تمت" ${sessionData.status === 'تمت' ? 'selected' : ''}>تمت</option>
-                                        <option value="ملغية" ${sessionData.status === 'ملغية' ? 'selected' : ''}>ملغية</option>
-                                    </select>
+                                    <label for="status-display" class="px-3 py-2 border-2 border-gray-300 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">الحالة</label>
+                                    <div class="flex-1 relative -mr-px">
+                                        <input type="text" id="status-display" autocomplete="off" class="w-full px-4 py-3 text-base bg-white border-2 border-gray-300 rounded-l-lg focus:ring-2 focus:ring-purple-500 focus:border-purple-500 placeholder:text-sm placeholder:font-normal placeholder:text-gray-400" value="${sessionData.status || ''}" placeholder="اكتب أو اختر الحالة">
+                                        <button type="button" id="status-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                                        <div id="status-dropdown" class="autocomplete-results hidden"></div>
+                                        <input type="hidden" id="status" name="status" value="${sessionData.status || ''}">
+                                    </div>
                                 </div>
                             </div>
                         </div>

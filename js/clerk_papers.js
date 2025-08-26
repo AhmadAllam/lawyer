@@ -194,7 +194,7 @@ function displayClerkPapersList(clerkPapers, clients, cases) {
             <div class="text-center text-gray-500 py-12">
                 <i class="ri-file-paper-line text-4xl mb-3"></i>
                 <p class="text-lg">لا توجد أوراق محضرين مضافة</p>
-                <p class="text-sm text-gray-400 mt-2">اضغط على "إضافة و��قة جديدة" لبدء الإضافة</p>
+                <p class="text-sm text-gray-400 mt-2">اضغط على "إضافة ورقة جديدة" لبدء الإضافة</p>
             </div>
         `;
         return;
@@ -389,6 +389,168 @@ function attachClerkPaperFormListeners(paperId) {
     const form = document.getElementById('clerk-paper-form');
     const cancelBtn = document.getElementById('cancel-paper-btn');
     
+    // إعداد الـ autocomplete للموكل
+    const clientInput = document.getElementById('client-name');
+    const clientDropdown = document.getElementById('client-name-dropdown');
+    const hiddenClient = document.getElementById('client-select');
+    
+    if (clientInput && clientDropdown && hiddenClient) {
+        setupAutocomplete('client-name', 'client-name-dropdown', async () => {
+            const clients = await getAllClients();
+            return clients.map(c => ({id: c.id, name: c.name}));
+        }, (item) => {
+            hiddenClient.value = item ? item.id : '';
+        });
+        
+        // زر السهم للكومبو بوكس
+        const toggleBtn = document.getElementById('client-name-toggle');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', async () => {
+                if (clientDropdown.classList.contains('hidden')) {
+                    // إظهار كل الموكلين
+                    const clients = await getAllClients();
+                    clientDropdown.innerHTML = '';
+                    
+                    if (clients.length > 0) {
+                        clients.forEach(client => {
+                            const div = document.createElement('div');
+                            div.textContent = client.name;
+                            div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+                            div.addEventListener('click', () => {
+                                hiddenClient.value = client.id;
+                                clientInput.value = client.name;
+                                clientDropdown.innerHTML = '';
+                                clientDropdown.classList.add('hidden');
+                            });
+                            clientDropdown.appendChild(div);
+                        });
+                        clientDropdown.classList.remove('hidden');
+                    }
+                } else {
+                    clientDropdown.classList.add('hidden');
+                }
+            });
+        }
+    }
+    
+    // إعداد الـ autocomplete لنوع الورقة
+    const paperTypeInput = document.getElementById('paper-type-name');
+    const paperTypeDropdown = document.getElementById('paper-type-dropdown');
+    const hiddenPaperType = document.getElementById('paper-type');
+    
+    if (paperTypeInput && paperTypeDropdown && hiddenPaperType) {
+        const paperTypes = ['إنذار', 'إعلان', 'أخرى'];
+        
+        setupAutocomplete('paper-type-name', 'paper-type-dropdown', async () => {
+            // جلب أنواع الأوراق المستخدمة سابقاً
+            const clerkPapers = await getAllClerkPapers();
+            const usedTypes = [...new Set(clerkPapers.map(p => p.paperType).filter(t => t))];
+            
+            // دمج الأنواع الافتراضية مع المستخدمة
+            const allTypes = [...new Set([...paperTypes, ...usedTypes])];
+            return allTypes.map(type => ({id: type, name: type}));
+        }, (item) => {
+            if (item) {
+                hiddenPaperType.value = item.name;
+            }
+            // لا نمسح الحقل المخفي إذا لم يكن هناك اختيار
+        });
+        
+        // تحديث الحقل المخفي عند الكتابة اليدوية
+        paperTypeInput.addEventListener('input', () => {
+            hiddenPaperType.value = paperTypeInput.value.trim();
+        });
+        
+        // زر السهم للكومبو بوكس
+        const paperTypeToggleBtn = document.getElementById('paper-type-toggle');
+        if (paperTypeToggleBtn) {
+            paperTypeToggleBtn.addEventListener('click', async () => {
+                if (paperTypeDropdown.classList.contains('hidden')) {
+                    // إظهار كل أنواع الأوراق
+                    const clerkPapers = await getAllClerkPapers();
+                    const usedTypes = [...new Set(clerkPapers.map(p => p.paperType).filter(t => t))];
+                    const allTypes = [...new Set([...paperTypes, ...usedTypes])];
+                    
+                    paperTypeDropdown.innerHTML = '';
+                    
+                    if (allTypes.length > 0) {
+                        allTypes.forEach(type => {
+                            const div = document.createElement('div');
+                            div.textContent = type;
+                            div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+                            div.addEventListener('click', () => {
+                                hiddenPaperType.value = type;
+                                paperTypeInput.value = type;
+                                paperTypeDropdown.innerHTML = '';
+                                paperTypeDropdown.classList.add('hidden');
+                            });
+                            paperTypeDropdown.appendChild(div);
+                        });
+                        paperTypeDropdown.classList.remove('hidden');
+                    }
+                } else {
+                    paperTypeDropdown.classList.add('hidden');
+                }
+            });
+        }
+    }
+    
+    // إعداد الـ autocomplete لقلم المحضرين
+    const clerkOfficeInput = document.getElementById('clerk-office-name');
+    const clerkOfficeDropdown = document.getElementById('clerk-office-dropdown');
+    const hiddenClerkOffice = document.getElementById('clerk-office');
+    
+    if (clerkOfficeInput && clerkOfficeDropdown && hiddenClerkOffice) {
+        setupAutocomplete('clerk-office-name', 'clerk-office-dropdown', async () => {
+            // جلب أقلام المحضرين المستخدمة سابقاً
+            const clerkPapers = await getAllClerkPapers();
+            const usedOffices = [...new Set(clerkPapers.map(p => p.clerkOffice).filter(o => o))];
+            
+            return usedOffices.map(office => ({id: office, name: office}));
+        }, (item) => {
+            if (item) {
+                hiddenClerkOffice.value = item.name;
+            }
+        });
+        
+        // تحديث الحقل المخفي عند الكتابة اليدوية
+        clerkOfficeInput.addEventListener('input', () => {
+            hiddenClerkOffice.value = clerkOfficeInput.value.trim();
+        });
+        
+        // زر السهم للكومبو بوكس
+        const clerkOfficeToggleBtn = document.getElementById('clerk-office-toggle');
+        if (clerkOfficeToggleBtn) {
+            clerkOfficeToggleBtn.addEventListener('click', async () => {
+                if (clerkOfficeDropdown.classList.contains('hidden')) {
+                    // إظهار كل أقلام المحضرين
+                    const clerkPapers = await getAllClerkPapers();
+                    const usedOffices = [...new Set(clerkPapers.map(p => p.clerkOffice).filter(o => o))];
+                    
+                    clerkOfficeDropdown.innerHTML = '';
+                    
+                    if (usedOffices.length > 0) {
+                        usedOffices.forEach(office => {
+                            const div = document.createElement('div');
+                            div.textContent = office;
+                            div.className = 'autocomplete-item text-right text-base font-semibold text-gray-900';
+                            div.addEventListener('click', () => {
+                                hiddenClerkOffice.value = office;
+                                clerkOfficeInput.value = office;
+                                clerkOfficeDropdown.innerHTML = '';
+                                clerkOfficeDropdown.classList.add('hidden');
+                            });
+                            clerkOfficeDropdown.appendChild(div);
+                        });
+                        clerkOfficeDropdown.classList.remove('hidden');
+                    }
+                } else {
+                    clerkOfficeDropdown.classList.add('hidden');
+                }
+            });
+        }
+    }
+    
     // حفظ النموذج
     if (form) {
         form.addEventListener('submit', (e) => {
@@ -412,16 +574,33 @@ async function handleSaveClerkPaper(e, paperId) {
     const formData = new FormData(form);
     const paperData = Object.fromEntries(formData.entries());
     
-    // تحويل البيانات للأنواع الصحيحة
-    paperData.clientId = parseInt(paperData.clientId);
-    
     // التحقق من البيانات المطلوبة
-    if (!paperData.clientId || !paperData.paperType || !paperData.paperNumber) {
-        showToast('يرجى ملء الحقول المطلوبة: نوع الورقة، اسم الموكل، رقم الورقة', 'error');
+    if (!paperData.paperType || !paperData.paperNumber) {
+        showToast('يرجى ملء الحقول المطلوبة: نوع الورقة، رقم الورقة', 'error');
         return;
     }
     
     try {
+        let clientId = parseInt(paperData.clientId);
+        const clientNameInput = document.getElementById('client-name');
+        
+        // إذا لم يتم اختيار موكل موجود، إنشاء موكل جديد
+        if (!clientId && clientNameInput && clientNameInput.value.trim()) {
+            const clientName = clientNameInput.value.trim();
+            if (clientName) {
+                clientId = await addClient({ name: clientName });
+                const hiddenClient = document.getElementById('client-select');
+                if (hiddenClient) hiddenClient.value = String(clientId);
+            }
+        }
+        
+        if (!clientId) {
+            showToast('يرجى اختيار أو إدخال اسم الموكل', 'error');
+            return;
+        }
+        
+        paperData.clientId = clientId;
+        
         if (paperId) {
             // تعديل ورقة موجودة
             const existingPaper = await getById('clerkPapers', paperId);
