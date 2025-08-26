@@ -56,14 +56,8 @@ function navigateBack() {
 
     const caseDetailsFormEl = document.getElementById('case-details-form');
     if (caseDetailsFormEl && window.location.pathname.includes('search.html')) {
-        if (typeof replaceCurrentView === 'function' && typeof displayNewCaseForm === 'function') {
-            replaceCurrentView(displayNewCaseForm);
-            return;
-        } else if (typeof displayNewCaseForm === 'function') {
-            stateManager.pushToModalHistory({ func: displayNewCaseForm, args: [] });
-            displayNewCaseForm();
-            return;
-        }
+        window.location.href = 'new.html';
+        return;
     }
 
     const partyFormEl = document.getElementById('party-details-form');
@@ -94,9 +88,7 @@ function navigateBack() {
 
     // حالات خاصة معروفة
     if (modalTitle.includes('تعديل بيانات الدعوى')) {
-        stateManager.setModalHistory([]);
-        stateManager.pushToModalHistory({ func: displayNewCaseForm, args: [] });
-        displayNewCaseForm();
+        window.location.href = 'new.html';
         return;
     }
 

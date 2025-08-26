@@ -8,17 +8,37 @@ const partyDetailsFormHTML = `
                 <div class="autocomplete-container">
                     <div class="flex items-stretch">
                         <label for="client-name" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">اسم الموكل</label>
-                        <input type="text" id="client-name" name="clientName" required autocomplete="off" class="flex-1 px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                        <div class="flex-1 relative -mr-px">
+                            <input type="text" id="client-name" name="clientName" required autocomplete="off" class="w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 min-h-[48px]">
+                            <button type="button" id="client-name-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </button>
+                            <div id="client-name-dropdown" class="autocomplete-results hidden"></div>
+                        </div>
                     </div>
                     <div id="client-autocomplete-results-container" class="autocomplete-results hidden"></div>
                 </div>
-                <div class="flex items-stretch">
-                    <label for="client-capacity" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">صفته</label>
-                    <input type="text" id="client-capacity" name="clientCapacity" class="flex-1 px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                <div class="autocomplete-container">
+                    <div class="flex items-stretch">
+                        <label for="client-capacity" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">صفته</label>
+                        <div class="flex-1 relative -mr-px">
+                            <input type="text" id="client-capacity" name="clientCapacity" autocomplete="off" class="w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 min-h-[48px]">
+                            <button type="button" id="client-capacity-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </button>
+                            <div id="client-capacity-dropdown" class="autocomplete-results hidden"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex items-stretch">
                     <label for="client-address" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">عنوانه</label>
-                    <input type="text" id="client-address" name="clientAddress" class="flex-1 px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                    <div class="flex-1 relative -mr-px">
+                        <input type="text" id="client-address" name="clientAddress" class="w-full px-4 py-3 bg-white border-2 border-blue-300 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-600 text-right font-semibold text-gray-900 min-h-[48px]">
+                        <button type="button" id="client-address-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div id="client-address-dropdown" class="autocomplete-results hidden"></div>
+                    </div>
                 </div>
                 <div class="flex items-stretch">
                     <label for="client-phone" class="px-4 py-3 border-2 border-blue-300 bg-blue-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">الهاتف</label>
@@ -33,17 +53,37 @@ const partyDetailsFormHTML = `
                 <div class="autocomplete-container">
                     <div class="flex items-stretch">
                         <label for="opponent-name" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">اسم الخصم</label>
-                        <input type="text" id="opponent-name" name="opponentName" required autocomplete="off" class="flex-1 px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                        <div class="flex-1 relative -mr-px">
+                            <input type="text" id="opponent-name" name="opponentName" required autocomplete="off" class="w-full px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 min-h-[48px]">
+                            <button type="button" id="opponent-name-toggle" class="absolute inset-y-0 left-0 flex.items-center px-2 text-gray-500 hover:text-gray-700">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </button>
+                            <div id="opponent-name-dropdown" class="autocomplete-results hidden"></div>
+                        </div>
                     </div>
                     <div id="opponent-autocomplete-results-container" class="autocomplete-results hidden"></div>
                 </div>
-                <div class="flex items-stretch">
-                    <label for="opponent-capacity" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">صفته</label>
-                    <input type="text" id="opponent-capacity" name="opponentCapacity" class="flex-1 px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                <div class="autocomplete-container">
+                    <div class="flex items-stretch">
+                        <label for="opponent-capacity" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">صفته</label>
+                        <div class="flex-1 relative -mr-px">
+                            <input type="text" id="opponent-capacity" name="opponentCapacity" autocomplete="off" class="w-full px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 min-h-[48px]">
+                            <button type="button" id="opponent-capacity-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700">
+                                <i class="ri-arrow-down-s-line"></i>
+                            </button>
+                            <div id="opponent-capacity-dropdown" class="autocomplete-results hidden"></div>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex items-stretch">
                     <label for="opponent-address" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">عنوانه</label>
-                    <input type="text" id="opponent-address" name="opponentAddress" class="flex-1 px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 -mr-px min-h-[48px]">
+                    <div class="flex-1 relative -mr-px">
+                        <input type="text" id="opponent-address" name="opponentAddress" class="w-full px-4 py-3 bg-white border-2 border-red-200 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-red-400 text-right font-semibold text-gray-900 min-h-[48px]">
+                        <button type="button" id="opponent-address-toggle" class="absolute inset-y-0 left-0 flex.items-center px-2 text-gray-500 hover:text-gray-700">
+                            <i class="ri-arrow-down-s-line"></i>
+                        </button>
+                        <div id="opponent-address-dropdown" class="autocomplete-results hidden"></div>
+                    </div>
                 </div>
                 <div class="flex items-stretch">
                     <label for="opponent-phone" class="px-4 py-3 border-2 border-red-200 bg-red-50 text-sm font-bold text-gray-700 shrink-0 w-32 md:w-36 text-right rounded-r-lg">الهاتف</label>
@@ -81,6 +121,15 @@ const partyDetailsFormHTML = `
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         await initDB();
+        try {
+            const origin = sessionStorage.getItem('returnToPage') || '';
+            if (origin === 'search') {
+                const cid = parseInt(sessionStorage.getItem('returnToClientId') || '0', 10);
+                if (cid) stateManager.setSelectedClientId(cid);
+            } else {
+                stateManager.setSelectedClientId(null);
+            }
+        } catch (_) {}
         loadPartyDetailsForm();
         setupBackButton();
         setupModalClose();
@@ -125,8 +174,34 @@ function loadPartyDetailsForm() {
     // Setup autocomplete
     setupAutocompleteFields();
     
+    initCapacityCombos();
+    initNameAddressCombos();
+    
     // Update client cases count
     updateClientCasesCount();
+
+    try {
+        const isClientLocked = !!stateManager.selectedClientId;
+        if (isClientLocked) {
+            const header = document.querySelector('#party-details-form .border-2.border-blue-300 h3');
+            if (header) {
+                const lockEl = document.createElement('i');
+                lockEl.className = 'ri-lock-2-fill text-gray-600 ml-2';
+                header.appendChild(lockEl);
+            }
+            const lockIds = ['client-name','client-capacity','client-address','client-phone'];
+            lockIds.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.readOnly = true;
+                    el.classList.add('bg-gray-100','cursor-not-allowed');
+                    el.setAttribute('tabindex','-1');
+                }
+            });
+            const toggles = ['client-name-toggle','client-capacity-toggle','client-address-toggle'];
+            toggles.forEach(id => { const btn = document.getElementById(id); if (btn) btn.style.display = 'none'; });
+        }
+    } catch (_) {}
 }
 
 async function loadSelectedClientData() {
@@ -160,25 +235,190 @@ function setupEventListeners() {
     });
 }
 
-function setupAutocompleteFields() {
-    // Client autocomplete
-    setupAutocomplete('client-name', 'client-autocomplete-results-container', getAllClients, (item) => {
-        stateManager.setSelectedClientId(item ? item.id : null);
-        document.getElementById('client-capacity').value = item ? item.capacity || '' : '';
-        document.getElementById('client-address').value = item ? item.address || '' : '';
-        document.getElementById('client-phone').value = item ? item.phone || '' : '';
-                // Update cases count when client changes
-        updateClientCasesCount();
-    });
+function setupAutocompleteFields() {}
 
-    // Opponent autocomplete
-    setupAutocomplete('opponent-name', 'opponent-autocomplete-results-container', getAllOpponents, (item) => {
-        stateManager.setSelectedOpponentId(item ? item.id : null);
-        document.getElementById('opponent-capacity').value = item ? item.capacity || '' : '';
-        document.getElementById('opponent-address').value = item ? item.address || '' : '';
-        document.getElementById('opponent-phone').value = item ? item.phone || '' : '';
-            });
+async function getCapacityOptions() {
+    try {
+        const [clients, opponents, cases] = await Promise.all([
+            getAllClients(),
+            getAllOpponents(),
+            getAllCases()
+        ]);
+        const s = new Set();
+        clients.forEach(c => { if (c && c.capacity && c.capacity.trim()) s.add(c.capacity.trim()); });
+        opponents.forEach(o => { if (o && o.capacity && o.capacity.trim()) s.add(o.capacity.trim()); });
+        cases.forEach(cs => {
+            if (cs && cs.clientCapacity && cs.clientCapacity.trim()) s.add(cs.clientCapacity.trim());
+            if (cs && cs.opponentCapacity && cs.opponentCapacity.trim()) s.add(cs.opponentCapacity.trim());
+        });
+        return Array.from(s).filter(Boolean).sort();
+    } catch (e) { return []; }
 }
+function setupCapacityCombobox(inputId, dropdownId, toggleId, options) {
+    const input = document.getElementById(inputId);
+    const dropdown = document.getElementById(dropdownId);
+    const toggle = document.getElementById(toggleId);
+    if (!input || !dropdown) return;
+    const container = input.closest('.autocomplete-container') || document;
+    const setVals = new Set(options || []);
+    function toList() { return Array.from(setVals).sort(); }
+    function show(list) {
+        dropdown.innerHTML = list.map(v => `<div class="autocomplete-item">${v}</div>`).join('');
+        dropdown.classList.remove('hidden');
+        dropdown.style.top = '';
+        dropdown.style.bottom = '';
+    }
+    function hide() { dropdown.classList.add('hidden'); }
+    function ensureCurrentInList() {
+        const val = (input.value || '').trim();
+        if (val && !setVals.has(val)) {
+            setVals.add(val);
+        }
+    }
+        input.addEventListener('input', () => {
+        const q = input.value.toLowerCase();
+        const filtered = toList().filter(v => v.toLowerCase().includes(q));
+        if (!dropdown.classList.contains('hidden')) {
+            show(filtered);
+        }
+    });
+    input.addEventListener('blur', () => {
+        ensureCurrentInList();
+    });
+    dropdown.addEventListener('click', (e) => {
+        const item = e.target.closest('.autocomplete-item');
+        if (!item) return;
+        input.value = item.textContent || '';
+        ensureCurrentInList();
+        hide();
+    });
+    if (toggle) {
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (dropdown.classList.contains('hidden')) show(toList()); else hide();
+        });
+    }
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) hide();
+    });
+}
+async function initCapacityCombos() {
+    const options = await getCapacityOptions();
+    setupCapacityCombobox('client-capacity', 'client-capacity-dropdown', 'client-capacity-toggle', options);
+    setupCapacityCombobox('opponent-capacity', 'opponent-capacity-dropdown', 'opponent-capacity-toggle', options);
+}
+function setupOptionsCombobox(inputId, dropdownId, toggleId, items, getLabel, onPick) {
+    const input = document.getElementById(inputId);
+    const dropdown = document.getElementById(dropdownId);
+    const toggle = document.getElementById(toggleId);
+    if (!input || !dropdown) return;
+    const container = input.closest('.autocomplete-container') || document;
+    let currentList = Array.isArray(items) ? items.slice() : [];
+    function render(list) {
+        dropdown.innerHTML = (list || []).map((item, idx) => `<div class="autocomplete-item" data-index="${idx}">${getLabel(item) || ''}</div>`).join('');
+        dropdown.classList.remove('hidden');
+        if (dropdown.id === 'caseStatus-dropdown') {
+            dropdown.style.top = 'auto';
+            dropdown.style.bottom = '100%';
+        } else {
+            dropdown.style.top = '';
+            dropdown.style.bottom = '';
+        }
+    }
+    function hide() { dropdown.classList.add('hidden'); }
+    input.addEventListener('input', () => {
+        const q = (input.value || '').toLowerCase();
+        const filtered = (Array.isArray(items) ? items : []).filter(item => ((getLabel(item) || '').toLowerCase().includes(q)));
+        if (!dropdown.classList.contains('hidden')) {
+            currentList = filtered;
+            render(currentList);
+        }
+    });
+    dropdown.addEventListener('click', (e) => {
+        const el = e.target.closest('.autocomplete-item');
+        if (!el) return;
+        const idx = parseInt(el.getAttribute('data-index'), 10);
+        const item = currentList[idx];
+        input.value = getLabel(item) || '';
+        if (typeof onPick === 'function') onPick(item);
+        hide();
+    });
+    if (toggle) {
+        toggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (dropdown.classList.contains('hidden')) {
+                currentList = Array.isArray(items) ? items.slice() : [];
+                render(currentList);
+            } else {
+                hide();
+            }
+        });
+    }
+    document.addEventListener('click', (e) => {
+        if (!container.contains(e.target)) hide();
+    });
+}
+async function initNameAddressCombos() {
+    try {
+        const [clients, opponents, cases] = await Promise.all([getAllClients(), getAllOpponents(), getAllCases()]);
+        const clientItems = (clients || []).map(c => ({ id: c.id, name: c.name || '', capacity: c.capacity || '', address: c.address || '', phone: c.phone || '' }));
+        const opponentItems = (opponents || []).map(o => ({ id: o.id, name: o.name || '', capacity: o.capacity || '', address: o.address || '', phone: o.phone || '' }));
+        const s = new Set();
+        (clients || []).forEach(c => { if (c && c.address && c.address.trim()) s.add(c.address.trim()); });
+        (opponents || []).forEach(o => { if (o && o.address && o.address.trim()) s.add(o.address.trim()); });
+        (cases || []).forEach(cs => {
+            if (cs && cs.clientAddress && cs.clientAddress.trim()) s.add(cs.clientAddress.trim());
+            if (cs && cs.opponentAddress && cs.opponentAddress.trim()) s.add(cs.opponentAddress.trim());
+        });
+        const addresses = Array.from(s).filter(Boolean).sort();
+        setupOptionsCombobox('client-name', 'client-name-dropdown', 'client-name-toggle', clientItems, i => i.name, (item) => {
+            stateManager.setSelectedClientId(item ? item.id : null);
+            document.getElementById('client-capacity').value = item ? item.capacity : '';
+            document.getElementById('client-address').value = item ? item.address : '';
+            document.getElementById('client-phone').value = item ? item.phone : '';
+            updateClientCasesCount();
+        });
+        setupOptionsCombobox('opponent-name', 'opponent-name-dropdown', 'opponent-name-toggle', opponentItems, i => i.name, (item) => {
+            stateManager.setSelectedOpponentId(item ? item.id : null);
+            document.getElementById('opponent-capacity').value = item ? item.capacity : '';
+            document.getElementById('opponent-address').value = item ? item.address : '';
+            document.getElementById('opponent-phone').value = item ? item.phone : '';
+        });
+        setupOptionsCombobox('client-address', 'client-address-dropdown', 'client-address-toggle', addresses, v => v, null);
+        setupOptionsCombobox('opponent-address', 'opponent-address-dropdown', 'opponent-address-toggle', addresses, v => v, null);
+    } catch (e) {}
+}
+function normalizeStatus(value) {
+    const s = (value || '').replace(/\uFFFD/g, '').trim();
+    if (s === 'متهية') return 'منتهية';
+    return s;
+}
+async function initCaseDetailsCombos() {
+    try {
+        const [cases, courts] = await Promise.all([getAllCases(), getCourtNames()]);
+        const cn = [...new Set((cases || []).map(c => c.circuitNumber).filter(v => v && v.trim()))].sort();
+        const ct = [...new Set((cases || []).map(c => c.caseType).filter(v => v && v.trim()))].sort();
+        const cs = [...new Set((cases || []).map(c => c.caseSubject || c.subject).filter(v => v && v.trim()))].sort();
+        const st = [...new Set((cases || []).map(c => normalizeStatus(c.caseStatus)).filter(v => v && v.trim()))].sort();
+        setupOptionsCombobox('court', 'court-dropdown', 'court-toggle', courts || [], v => v, null);
+        setupOptionsCombobox('circuitNumber', 'circuitNumber-dropdown', 'circuitNumber-toggle', cn, v => v, null);
+        setupOptionsCombobox('caseType', 'caseType-dropdown', 'caseType-toggle', ct, v => v, null);
+        setupOptionsCombobox('caseSubject', 'caseSubject-dropdown', 'caseSubject-toggle', cs, v => v, null);
+        setupOptionsCombobox('caseStatus', 'caseStatus-dropdown', 'caseStatus-toggle', st, v => v, null);
+    } catch (e) {}
+}
+
+const hideAllDropdowns = () => {
+    document.querySelectorAll('.autocomplete-results').forEach(el => el.classList.add('hidden'));
+};
+
+document.addEventListener('click', () => { hideAllDropdowns(); }, true);
+
+document.addEventListener('focusin', () => { hideAllDropdowns(); });
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' || e.key === 'Tab') hideAllDropdowns();
+});
 
 function setupBackButton() {
     const backButton = document.getElementById('back-to-main');
@@ -190,7 +430,6 @@ function setupBackButton() {
             const sessionForm = embedded ? embedded.querySelector('#session-form') : null;
             const sessionList = embedded ? embedded.querySelector('#session-list-container') : null;
 
-            // لو في شاشة الجلسات (فورم أو قائمة)، ارجع ل"ادخال بيانات الدعوى الجديدة"
             if (sessionForm || sessionList) {
                 e.preventDefault();
                 if (typeof displayCaseDetailsForm === 'function') {
@@ -205,7 +444,6 @@ function setupBackButton() {
                 return;
             }
 
-            // لو في شاشة "ادخال بيانات الدعوى" (case-details-form) ارجع ل"ادخال بيانات ا��أطراف"
             if (caseForm) {
                 e.preventDefault();
                 const partyContainer = document.getElementById('party-form-container');
@@ -216,14 +454,24 @@ function setupBackButton() {
                 return;
             }
 
-            // لو في أي محتوى مدمج آخر، امسحه
             if (hasEmbeddedView) {
                 e.preventDefault();
                 if (embedded) embedded.innerHTML = '';
                 return;
             }
 
-            // لا يوجد محتوى مدمج: الرجوع للصفحة الرئيسية
+            try {
+                const goBackTo = sessionStorage.getItem('returnToPage') || '';
+                const clientId = parseInt(sessionStorage.getItem('returnToClientId') || '0', 10);
+                if (goBackTo === 'search' && clientId) {
+                    e.preventDefault();
+                    sessionStorage.removeItem('returnToPage');
+                    sessionStorage.setItem('openClientDetailsOnSearch', String(clientId));
+                    window.location.href = 'search.html';
+                    return;
+                }
+            } catch (_) {}
+
             window.location.href = 'index.html';
         });
     }
@@ -333,6 +581,12 @@ async function saveParties(partyData) {
             phone: partyData.clientPhone
         };
         clientId = await addClient(clientData);
+    } else {
+        await updateRecord('clients', clientId, {
+            capacity: partyData.clientCapacity,
+            address: partyData.clientAddress,
+            phone: partyData.clientPhone
+        });
     }
 
     if (!opponentId) {
@@ -343,6 +597,12 @@ async function saveParties(partyData) {
             phone: partyData.opponentPhone
         };
         opponentId = await addOpponent(opponentData);
+    } else {
+        await updateRecord('opponents', opponentId, {
+            capacity: partyData.opponentCapacity,
+            address: partyData.opponentAddress,
+            phone: partyData.opponentPhone
+        });
     }
 
     // Save client-opponent relationship in local storage temporarily
@@ -498,16 +758,14 @@ async function displayCaseDetailsForm() {
                     <div class="flex items-stretch">
                         <label for="court" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">المحكمة</label>
                         <div class="flex-1 relative -mr-px">
-                            <select id="courtSelect" class="w-full h-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800">
-                                <option value="">اختر المحكمة</option>
-                                <option value="__custom__">إدخال يدوي...</option>
-                            </select>
-                            <input type="text" id="court" name="court" class="w-full h-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right transition-colors font-semibold text-gray-800 hidden" placeholder="اكتب اسم المحكمة">
+                            <input type="text" id="court" name="court" class="w-full h-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right transition-colors font-semibold text-gray-800">
+                            <button type="button" id="court-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button>
+                            <div id="court-dropdown" class="autocomplete-results hidden"></div>
                         </div>
                     </div>
-                                        <div class="flex items-stretch"><label for="circuitNumber" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الدائرة</label><input type="text" id="circuitNumber" name="circuitNumber" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800 -mr-px"></div>
-                                        <div class="flex items-stretch"><label for="caseType" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الدعوى</label><input type="text" id="caseType" name="caseType" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700.text-right font-semibold text-gray-800 -mr-px"></div>
-                    <div class="flex items-stretch"><label for="caseSubject" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">موضوع الدعوى</label><input type="text" id="caseSubject" name="caseSubject" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800 -mr-px"></div>
+                                        <div class="flex items-stretch"><label for="circuitNumber" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الدائرة</label><div class="flex-1 relative -mr-px"><input type="text" id="circuitNumber" name="circuitNumber" class="w-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right.font-semibold text-gray-800"><button type="button" id="circuitNumber-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button><div id="circuitNumber-dropdown" class="autocomplete-results hidden"></div></div></div>
+                                        <div class="flex items-stretch"><label for="caseType" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">نوع الدعوى</label><div class="flex-1 relative -mr-px"><input type="text" id="caseType" name="caseType" class="w-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800"><button type="button" id="caseType-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button><div id="caseType-dropdown" class="autocomplete-results hidden"></div></div></div>
+                    <div class="flex items-stretch"><label for="caseSubject" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">موضوع الدعوى</label><div class="flex-1 relative -mr-px"><input type="text" id="caseSubject" name="caseSubject" class="w-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800"><button type="button" id="caseSubject-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button><div id="caseSubject-dropdown" class="autocomplete-results hidden"></div></div></div>
                     <div class="flex items-stretch">
                         <label for="caseNumber" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم الدعوى</label>
                         <div class="flex-1 -mr-px">
@@ -524,14 +782,7 @@ async function displayCaseDetailsForm() {
                     <div class="flex items-stretch"><label for="poaNumber" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">رقم التوكيل</label><input type="text" id="poaNumber" name="poaNumber" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800 -mr-px"></div>
                                         <div class="flex items-stretch">
                         <label for="caseStatus" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">حالة القضية</label>
-                        <select id="caseStatus" name="caseStatus" class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg focus:ring-0 focus:border-blue-700 text-right font-bold transition-colors -mr-px">
-                            <option value="">اختر حالة القضية</option>
-                            <option value="جاري النظر">جاري النظر</option>
-                            <option value="محكوم فيها">محكوم فيها</option>
-                            <option value="مؤجلة">مؤجلة</option>
-                            <option value="م��تهية">منتهية</option>
-                            <option value="مستأنفة">مستأنفة</option>
-                        </select>
+                        <div class="flex-1 relative -mr-px"><input type="text" id="caseStatus" name="caseStatus" class="w-full px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-bold transition-colors"><button type="button" id="caseStatus-toggle" class="absolute inset-y-0 left-0 flex items-center px-2 text-gray-500 hover:text-gray-700"><i class="ri-arrow-down-s-line"></i></button><div id="caseStatus-dropdown" class="autocomplete-results hidden"></div></div>
                     </div>
                     <div class="flex items-stretch"><label for="notes" class="px-3 py-3 border-2 border-gray-400 bg-gray-100 text-sm font-bold text-gray-700 shrink-0 w-28 md:w-32 text-right rounded-r-lg">ملاحظات</label><input type="text" id="notes" name="notes" placeholder="أضف أي ملاحظات..." class="flex-1 px-3 py-3 bg-white border-2 border-gray-400 rounded-l-lg.placeholder-gray-400 focus:ring-0 focus:border-blue-700 text-right font-semibold text-gray-800 -mr-px"></div>
                     
@@ -662,9 +913,7 @@ async function displayCaseDetailsForm() {
     caseYearInput.addEventListener('input', () => validateCaseNumber(caseNumberInput, caseYearInput, caseNumberError));
     
     setTimeout(async () => {
-        await loadCourtsSelect();
-        setupCourtSelection();
-        loadCourtData();
+        await initCaseDetailsCombos();
     }, 100);
 }
 

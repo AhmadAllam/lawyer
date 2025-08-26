@@ -17,6 +17,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     try {
         loadSearchContent();
         setupBackButton();
+        try {
+            const cid = parseInt(sessionStorage.getItem('openClientDetailsOnSearch') || '0', 10);
+            if (cid) {
+                sessionStorage.removeItem('openClientDetailsOnSearch');
+                setTimeout(() => { try { displayClientEmbedded(cid); } catch(e) {} }, 0);
+            }
+        } catch (_) {}
         if (!dbOk && typeof showToast === 'function') {
             showToast('تعذر تهيئة قاعدة البيانات. سيتم عرض الواجهة بدون بيانات.', 'warning');
         }
@@ -62,7 +69,7 @@ function loadSearchContent() {
                             <i class="ri-search-line text-3xl text-white"></i>
                         </div>
                         <h3 class="text-xl font-bold text-gray-800 mb-2">البحث</h3>
-                        <p class="text-sm text-gray-600">الموكلين • الخصوم • القضايا • التوكيلات • الحصر</p>
+                        <p class="text-sm text-gray-600">اسم الموكل • اسم الخصم • رقم الدعوى • رقم الحصر</p>
                     </div>
                     
                     <div class="space-y-4">
@@ -702,12 +709,17 @@ async function performQuickSearch(query) {
     clientsList.innerHTML = '<div class="text-center text-gray-500 py-8"><i class="ri-loader-4-line animate-spin text-3xl mb-3"></i><p class="text-lg">جاري البحث السريع...</p></div>';
     
     try {
-        let allMatchingClients = new Set(); // استخدام Set لتجنب التكرار
+        let allMatchingClients = new Map(); // استخدام Map لحفظ التطابقات
         
         // 1. البحث في أسماء الموكلين
         const clients = await getAllClients();
         const matchingClientsByName = clients.filter(c => c.name.toLowerCase().includes(query));
-        matchingClientsByName.forEach(client => allMatchingClients.add(client.id));
+        matchingClientsByName.forEach(client => {
+            if (!allMatchingClients.has(client.id)) {
+                allMatchingClients.set(client.id, []);
+            }
+            allMatchingClients.get(client.id).push(`الاسم: ${client.name}`);
+        });
         
         // 2. البحث في أسماء الخصوم
         const opponents = await getAllOpponents();
@@ -718,28 +730,44 @@ async function performQuickSearch(query) {
             const opponentCases = await getFromIndex('cases', 'opponentId', opponent.id);
             opponentCases.forEach(caseRecord => {
                 if (caseRecord.clientId) {
-                    allMatchingClients.add(caseRecord.clientId);
+                    if (!allMatchingClients.has(caseRecord.clientId)) {
+                        allMatchingClients.set(caseRecord.clientId, []);
+                    }
+                    allMatchingClients.get(caseRecord.clientId).push(`الخصم: ${opponent.name}`);
                 }
             });
         }
         
-        // 3. البحث في أرقام الدعاوى
+        // 3. البحث في أرقام الدعاوى فقط
         const cases = await getAllCases();
         const matchingCases = cases.filter(c => 
-            c.caseNumber?.toString().includes(query) || 
-            c.caseYear?.toString().includes(query) ||
-            c.inventoryNumber?.toString().includes(query) ||
-            c.inventoryYear?.toString().includes(query) ||
-            c.poaNumber?.toString().includes(query)
+            c.caseNumber?.toString().includes(query)
         );
         matchingCases.forEach(caseRecord => {
             if (caseRecord.clientId) {
-                allMatchingClients.add(caseRecord.clientId);
+                if (!allMatchingClients.has(caseRecord.clientId)) {
+                    allMatchingClients.set(caseRecord.clientId, []);
+                }
+                allMatchingClients.get(caseRecord.clientId).push(`رقم الدعوى: ${caseRecord.caseNumber}`);
             }
         });
         
-        // تحويل Set إلى array والحصول على بيانات الموكلين
-        const matchingClientIds = Array.from(allMatchingClients);
+        // 4. البحث في أرقام الحصر من جدول الجلسات
+        const sessions = await getAllSessions();
+        const matchingSessions = sessions.filter(s => 
+            s.inventoryNumber?.toString().includes(query)
+        );
+        matchingSessions.forEach(session => {
+            if (session.clientId) {
+                if (!allMatchingClients.has(session.clientId)) {
+                    allMatchingClients.set(session.clientId, []);
+                }
+                allMatchingClients.get(session.clientId).push(`رقم الحصر: ${session.inventoryNumber}`);
+            }
+        });
+        
+        // تحويل Map إلى array والحصول على بيانات الموكلين
+        const matchingClientIds = Array.from(allMatchingClients.keys());
         const matchingClients = await Promise.all(
             matchingClientIds.map(id => getById('clients', id))
         );
@@ -789,7 +817,7 @@ async function performQuickSearch(query) {
         // عرض النتائج بنفس التنسيق مثل loadAllClients
         let html = '';
         for (const client of validMatchingClients) {
-            // جلب القضايا الخاصة بالموكل
+            // جلب القضايا ا��خاصة بالموكل
             const cases = await getFromIndex('cases', 'clientId', client.id);
             
             // جلب الخصوم
@@ -813,6 +841,59 @@ async function performQuickSearch(query) {
                 const sessions = await getFromIndex('sessions', 'caseId', caseRecord.id);
                 totalSessions += sessions.length;
             }
+            
+            // إعداد التطابقات للعرض
+            const matches = allMatchingClients.get(client.id) || [];
+            const matchesHtml = matches.length > 0 ? `
+                <div class="flex items-center gap-2 mt-2">
+                    ${matches.slice(0, 3).map(match => {
+                        let bgColor = 'bg-purple-100';
+                        let textColor = 'text-purple-700';
+                        let iconColor = 'text-purple-600';
+                        let icon = 'ri-search-eye-line';
+                        
+                        if (match.includes('الاسم:')) {
+                            bgColor = 'bg-blue-100';
+                            textColor = 'text-blue-700';
+                            iconColor = 'text-blue-600';
+                            icon = 'ri-user-3-line';
+                        } else if (match.includes('الخصم:')) {
+                            bgColor = 'bg-red-100';
+                            textColor = 'text-red-700';
+                            iconColor = 'text-red-600';
+                            icon = 'ri-shield-user-line';
+                        } else if (match.includes('رقم الدعوى:') || match.includes('سنة الدعوى:')) {
+                            bgColor = 'bg-indigo-100';
+                            textColor = 'text-indigo-700';
+                            iconColor = 'text-indigo-600';
+                            icon = 'ri-briefcase-line';
+                        } else if (match.includes('رقم الحصر:') || match.includes('سنة الحصر:')) {
+                            bgColor = 'bg-purple-100';
+                            textColor = 'text-purple-700';
+                            iconColor = 'text-purple-600';
+                            icon = 'ri-file-list-3-line';
+                        } else if (match.includes('رقم التوكيل:')) {
+                            bgColor = 'bg-emerald-100';
+                            textColor = 'text-emerald-700';
+                            iconColor = 'text-emerald-600';
+                            icon = 'ri-file-text-line';
+                        }
+                        
+                        return `
+                            <div class="flex items-center gap-1 ${bgColor} px-2 py-1 rounded-full">
+                                <i class="${icon} ${iconColor} text-xs"></i>
+                                <span class="text-xs font-medium ${textColor}">${match}</span>
+                            </div>
+                        `;
+                    }).join('')}
+                    ${matches.length > 3 ? `
+                        <div class="flex items-center gap-1 bg-gray-100 px-2 py-1 rounded-full">
+                            <i class="ri-more-line text-gray-600 text-xs"></i>
+                            <span class="text-xs font-medium text-gray-700">+${matches.length - 3}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            ` : '';
             
             html += `
                 <div class="client-card bg-gradient-to-r from-white via-blue-50 to-white border border-blue-200 rounded-xl p-5 hover:shadow-lg hover:border-blue-400 hover:from-blue-50 hover:to-blue-100 transition-all duration-300 cursor-pointer group" data-client-id="${client.id}">
@@ -842,6 +923,7 @@ async function performQuickSearch(query) {
                                         <span class="text-xs text-green-600">جلسة</span>
                                     </div>
                                 </div>
+                                ${matchesHtml}
                             </div>
                         </div>
                         <div class="flex flex-col gap-2">
@@ -863,7 +945,7 @@ async function performQuickSearch(query) {
         clientsList.innerHTML = html;
         attachClientCardListeners();
         
-        // تحديث عداد ��لنتائج المعروضة
+        // تحديث عداد النتائج المعروضة
         const displayedResultsElement = document.getElementById('displayed-results');
         if (displayedResultsElement) {
             displayedResultsElement.textContent = validMatchingClients.length;
@@ -902,7 +984,7 @@ async function updateQuickStats() {
 // دالة حذف الموكل
 async function handleDeleteClient(clientId) {
     try {
-        // جلب بيانات ��لموكل
+        // جلب بيانات الموكل
         const client = await getById('clients', clientId);
         if (!client) {
             showToast('الموكل غير موجود', 'error');
@@ -989,7 +1071,7 @@ async function handleCreateFolderAndUploadForClient(clientName) {
 // فتح مجلد الموكل من نافذة البحث
 async function handleOpenFolderForClient(clientName) {
     if (!clientName) {
-        showToast('يجب تحدي�� اسم الموكل', 'error');
+        showToast('يجب تحديد اسم الموكل', 'error');
         return;
     }
     

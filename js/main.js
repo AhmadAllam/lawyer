@@ -49,6 +49,11 @@ function generateMenuItems() {
 function handleCardClick(id) {
     if (id === 'new') {
         stateManager.resetCaseState();
+        try {
+            sessionStorage.removeItem('returnToPage');
+            sessionStorage.removeItem('returnToClientId');
+            sessionStorage.removeItem('openClientDetailsOnSearch');
+        } catch (e) {}
         window.location.href = 'new.html';
     } else if (id === 'search') {
         window.location.href = 'search.html';
@@ -91,6 +96,12 @@ document.addEventListener('DOMContentLoaded', async function() {
             const name = await getSetting('officeName');
             const officeEl = document.getElementById('office-name-display');
             if (name && officeEl) officeEl.textContent = name;
+        } catch (e) {}
+
+        try {
+            sessionStorage.removeItem('openClientDetailsOnSearch');
+            sessionStorage.removeItem('returnToClientId');
+            sessionStorage.removeItem('returnToPage');
         } catch (e) {}
     } catch(error) {
     }

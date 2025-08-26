@@ -507,7 +507,11 @@ function attachClientViewListeners(clientId, opponents) {
     if (addCaseBtn) {
         addCaseBtn.addEventListener('click', () => {
             stateManager.setSelectedClientId(clientId);
-            navigateTo(displayNewCaseForm);
+            try {
+                sessionStorage.setItem('returnToPage', 'search');
+                sessionStorage.setItem('returnToClientId', String(clientId));
+            } catch (_) {}
+            window.location.href = 'new.html';
         });
     }
 
