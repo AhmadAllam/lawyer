@@ -4,6 +4,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electronAPI', {
     createClientFolder: (clientName) => ipcRenderer.invoke('create-client-folder', clientName),
     openClientFolder: (clientName) => ipcRenderer.invoke('open-client-folder', clientName),
+    openClientsMainFolder: () => ipcRenderer.invoke('open-clients-main-folder'),
     createLegalLibraryFolder: (folderName) => ipcRenderer.invoke('create-legal-library-folder', folderName),
     openLegalLibraryMainFolder: () => ipcRenderer.invoke('open-legal-library-main-folder'),
     loadLegalLibraryFolders: () => ipcRenderer.invoke('load-legal-library-folders'),

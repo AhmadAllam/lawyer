@@ -44,6 +44,90 @@ function createWindow() {
 
     mainWindow.loadFile('index.html');
     
+    mainWindow.on('close', async (e) => {
+        try {
+            e.preventDefault();
+            const shouldBackup = await mainWindow.webContents.executeJavaScript(`(async () => {
+                try {
+                    const db = await new Promise((resolve, reject) => {
+                        const req = indexedDB.open('LawyerAppDB');
+                        req.onsuccess = () => resolve(req.result);
+                        req.onerror = () => reject(req.error);
+                    });
+                    if (!db.objectStoreNames.contains('settings')) { try { db.close(); } catch(e) {} return false; }
+                    const res = await new Promise((resolve) => {
+                        try {
+                            const tx = db.transaction(['settings'], 'readonly');
+                            const store = tx.objectStore('settings');
+                            const r = store.get('autoBackupOnExit');
+                            r.onsuccess = () => {
+                                const val = r.result ? r.result.value : null;
+                                resolve(val === true || val === '1' || val === 1);
+                            };
+                            r.onerror = () => resolve(false);
+                        } catch (err) {
+                            resolve(false);
+                        }
+                    });
+                    try { db.close(); } catch (e) {}
+                    return res;
+                } catch (err) {
+                    return false;
+                }
+            })();`, true);
+            let backupJson = null;
+            if (shouldBackup) {
+                backupJson = await mainWindow.webContents.executeJavaScript(`(async () => {
+                    try {
+                        const db = await new Promise((resolve, reject) => {
+                            const req = indexedDB.open('LawyerAppDB');
+                            req.onsuccess = () => resolve(req.result);
+                            req.onerror = () => reject(req.error);
+                        });
+                        const storeNames = ['clients','opponents','cases','sessions','accounts','administrative','clerkPapers','expertSessions','settings'];
+                        const data = {};
+                        await Promise.all(storeNames.map(name => new Promise((resolve) => {
+                            if (!db.objectStoreNames.contains(name)) {
+                                data[name] = [];
+                                return resolve();
+                            }
+                            try {
+                                const tx = db.transaction([name], 'readonly');
+                                const store = tx.objectStore(name);
+                                const r = store.getAll();
+                                r.onsuccess = () => { data[name] = r.result; resolve(); };
+                                r.onerror = () => { data[name] = []; resolve(); };
+                            } catch (err) {
+                                data[name] = [];
+                                resolve();
+                            }
+                        })));
+                        try { db.close(); } catch (e) {}
+                        const backup = { version: '1.0.0', timestamp: new Date().toISOString(), data };
+                        return JSON.stringify(backup);
+                    } catch (err) {
+                        return null;
+                    }
+                })();`, true);
+            }
+            if (backupJson) {
+                const appDir = app && app.isPackaged ? path.dirname(process.execPath) : process.cwd();
+                const parentDir = path.dirname(appDir);
+                const clientsFolder = path.join(parentDir, 'Clients Files');
+                if (!fs.existsSync(clientsFolder)) {
+                    fs.mkdirSync(clientsFolder, { recursive: true });
+                }
+                const dateStr = new Date().toISOString().slice(0, 19).replace(/:/g, '-');
+                const filename = `lawyers-backup-${dateStr}.json`;
+                fs.writeFileSync(path.join(clientsFolder, filename), backupJson, 'utf8');
+            }
+        } catch (err) {
+        } finally {
+            try { mainWindow.removeAllListeners('close'); } catch(e) {}
+            try { mainWindow.destroy(); } catch(e) {}
+        }
+    });
+
     mainWindow.on('closed', () => {
         mainWindow = null;
     });
@@ -66,8 +150,9 @@ if (app) {
 
     ipcMain.handle('create-client-folder', async (event, clientName) => {
         try {
-            const desktopPath = path.join(os.homedir(), 'Desktop');
-            const clientsFolder = path.join(desktopPath, 'Clients Files');
+            const appDir = app && app.isPackaged ? path.dirname(process.execPath) : process.cwd();
+            const parentDir = path.dirname(appDir);
+            const clientsFolder = path.join(parentDir, 'Clients Files');
             const clientFolder = path.join(clientsFolder, clientName);
 
 
@@ -110,8 +195,9 @@ if (app) {
 
     ipcMain.handle('open-client-folder', async (event, clientName) => {
         try {
-            const desktopPath = path.join(os.homedir(), 'Desktop');
-            const clientsFolder = path.join(desktopPath, 'Clients Files');
+            const appDir = app && app.isPackaged ? path.dirname(process.execPath) : process.cwd();
+            const parentDir = path.dirname(appDir);
+            const clientsFolder = path.join(parentDir, 'Clients Files');
             const clientFolder = path.join(clientsFolder, clientName);
 
             if (fs.existsSync(clientFolder)) {
@@ -123,6 +209,22 @@ if (app) {
         } catch (error) {
 
             return { success: false, message: 'حدث خطأ في فتح المجلد' };
+        }
+    });
+
+
+    ipcMain.handle('open-clients-main-folder', async (event) => {
+        try {
+            const appDir = app && app.isPackaged ? path.dirname(process.execPath) : process.cwd();
+            const parentDir = path.dirname(appDir);
+            const clientsFolder = path.join(parentDir, 'Clients Files');
+            if (!fs.existsSync(clientsFolder)) {
+                fs.mkdirSync(clientsFolder, { recursive: true });
+            }
+            shell.openPath(clientsFolder);
+            return { success: true, message: 'تم فتح مجلد الموكلين' };
+        } catch (error) {
+            return { success: false, message: 'حدث خطأ في فتح مجلد الموكلين' };
         }
     });
 

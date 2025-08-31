@@ -8,6 +8,7 @@ const menuItems = [
     { id: 'expert-sessions', label: 'جلسات الخبراء', icon: 'ri-team-line', color: 'indigo', description: 'جلسات الخبراء' },
     { id: 'archive', label: 'الأرشيف', icon: 'ri-folder-history-line', color: 'blue', description: 'الأرشيف والملفات' },
     { id: 'legal-library', label: 'المكتبة القانونية', icon: 'ri-book-open-line', color: 'green', description: 'المراجع القانونية' },
+    { id: 'open-clients-folder', label: 'ملفات الموكلين', icon: 'ri-folder-open-line', color: 'green', description: 'عرض مستندات عملائك' },
     { id: 'reports', label: 'التقارير', icon: 'ri-pie-chart-line', color: 'red', description: 'التقارير والإحصائيات' },
     { id: 'settings', label: 'الإعدادات', icon: 'ri-settings-3-line', color: 'indigo', description: 'إعدادات النظام' }
 ];
@@ -71,6 +72,16 @@ function handleCardClick(id) {
         window.location.href = 'archive.html';
     } else if (id === 'legal-library') {
         window.location.href = 'legal-library.html';
+    } else if (id === 'open-clients-folder') {
+        if (window.electronAPI && window.electronAPI.openClientsMainFolder) {
+            window.electronAPI.openClientsMainFolder();
+        } else {
+            if (typeof showToast === 'function') {
+                showToast('هذه الميزة متاحة فقط في تطبيق سطح المكتب', 'info');
+            } else {
+                alert('هذه الميزة متاحة فقط في تطبيق سطح المكتب');
+            }
+        }
     } else if (id === 'reports') {
         window.location.href = 'reports.html';
     } else if (id === 'settings') {

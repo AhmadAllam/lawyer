@@ -18,6 +18,39 @@ async function updateCountersInHeader() {
         if (tomorrowAdministrativeCountElement) {
             tomorrowAdministrativeCountElement.textContent = tomorrowAdministrativeCount > 0 ? tomorrowAdministrativeCount.toString() : '0';
         }
+        const isHomePage = /(^|\\|\/)index\.html$/.test(window.location.pathname) || window.location.pathname === '/' || window.location.pathname === '';
+        const hasSessions = tomorrowSessionsCount > 0;
+        const hasAdmin = tomorrowAdministrativeCount > 0;
+        const hasAnyTomorrow = hasSessions || hasAdmin;
+        if (isHomePage && hasAnyTomorrow) {
+            try {
+                let mode = 'hourly';
+                try {
+                    const v = await getSetting('tomorrowAudioMode');
+                    if (v === 'off' || v === 'always' || v === 'hourly' || v === '2h' || v === '3h') mode = v;
+                } catch (e) {}
+                if (mode !== 'off') {
+                    let src = '';
+                    let key = '';
+                    if (hasSessions && hasAdmin) { src = 'audio/s-m.mp3'; key = 'tomorrowCombinedAudioLast'; }
+                    else if (hasSessions) { src = 'audio/s.mp3'; key = 'tomorrowAudioLast'; }
+                    else { src = 'audio/m.mp3'; key = 'tomorrowAdminAudioLast'; }
+                    if (mode === 'always') {
+                        enqueueAlert(src);
+                    } else {
+                        const now = Date.now();
+                        const last = parseInt(localStorage.getItem(key) || '0', 10);
+                        let gap = 3600000;
+                        if (mode === '2h') gap = 2 * 3600000;
+                        else if (mode === '3h') gap = 3 * 3600000;
+                        if (!Number.isFinite(last) || (now - last) >= gap) {
+                            enqueueAlert(src);
+                            localStorage.setItem(key, String(now));
+                        }
+                    }
+                }
+            } catch (e) {}
+        }
         
     } catch (error) {
     }
@@ -25,6 +58,24 @@ async function updateCountersInHeader() {
 
 function getCurrentDate() {
     return new Date().toISOString().split('T')[0];
+}
+function enqueueAlert(src) {
+    if (!window.__alertQueue) window.__alertQueue = [];
+    window.__alertQueue.push(src);
+    if (!window.__isAlertPlaying) {
+        const next = () => {
+            const s = window.__alertQueue.shift();
+            if (!s) { window.__isAlertPlaying = false; return; }
+            window.__isAlertPlaying = true;
+            try {
+                const a = new Audio(s);
+                a.addEventListener('ended', () => { window.__isAlertPlaying = false; next(); });
+                a.addEventListener('error', () => { window.__isAlertPlaying = false; next(); });
+                a.play().catch(() => { window.__isAlertPlaying = false; next(); });
+            } catch (e) { window.__isAlertPlaying = false; next(); }
+        };
+        next();
+    }
 }
 
 async function startDateAlternation() {

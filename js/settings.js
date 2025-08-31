@@ -28,6 +28,17 @@ function displaySettingsModal() {
                                 استعادة من نسخة احتياطية
                             </button>
                         </div>
+                        <div class="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                            <span class="text-sm font-semibold text-gray-700">النسخ الاحتياطي تلقائياً عند الخروج</span>
+                            <label class="flex items-center gap-3 cursor-pointer select-none">
+                                <input id="toggle-auto-backup" type="checkbox" style="position:absolute;width:1px;height:1px;opacity:0;">
+                                <div id="auto-backup-track" class="relative" style="width:56px;height:28px;border-radius:9999px;background:#e5e7eb;border:1px solid #cbd5e1;box-shadow:inset 0 1px 2px rgba(0,0,0,.08);transition:background .25s, box-shadow .25s, border-color .25s;cursor:pointer;">
+                                    <div id="auto-backup-knob" style="position:absolute;top:2px;left:2px;width:24px;height:24px;background:#ffffff;border-radius:9999px;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .25s, box-shadow .25s;"></div>
+                                </div>
+                                <span id="auto-backup-off" class="text-xs font-bold" style="color:#4b5563;">موقوف</span>
+                                <span id="auto-backup-on" class="text-xs font-bold" style="color:#1d4ed8;display:none;">مُفعّل</span>
+                            </label>
+                        </div>
                     </div>
                 </div>
 
@@ -103,8 +114,58 @@ function displaySettingsModal() {
             </div>
         </div>
     `;
-
-
+    
+    (function(){ 
+        const grid = document.querySelector('#modal-content .grid');
+        if (!grid) return;
+        grid.insertAdjacentHTML('beforeend', `
+                <div class="bg-white border-2 border-gray-300 rounded-xl p-3 shadow-md transition-all h-fit">
+                    <div class="text-center mb-4">
+                        <div class="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center mx-auto mb-2 shadow-md">
+                            <i class="ri-volume-up-line text-white text-lg"></i>
+                        </div>
+                        <h3 class="text-base font-bold text-blue-700 mb-1">التنبيهات الصوتيه</h3>
+                        <p class="text-sm text-gray-600">تنبيهات جلسات الغد وأعمال الغد</p>
+                    </div>
+                    <div class="space-y-3">
+                        <label class="block text-sm font-bold text-gray-700 mb-2 text-center">تكرار التنبيه</label>
+                        <select id="tomorrow-audio-mode" class="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-center text-sm bg-white transition-all">
+                            <option value="off">معطل</option>
+                            <option value="always">تشغيل باستمرار</option>
+                            <option value="hourly">كل ساعة</option>
+                            <option value="2h">كل ساعتين</option>
+                            <option value="3h">كل 3 ساعات</option>
+                        </select>
+                        <button id="save-tomorrow-audio-settings-btn" class="w-full px-4 py-3 bg-blue-900 text-white rounded-lg hover:bg-black transition-colors text-sm font-bold flex items-center justify-center gap-2 shadow-md">
+                            <i class="ri-save-line text-lg"></i>
+                            حفظ الإعدادات
+                        </button>
+                    </div>
+                </div>
+        `);
+        const select = document.getElementById('tomorrow-audio-mode');
+        const btn = document.getElementById('save-tomorrow-audio-settings-btn');
+        (async ()=>{ 
+            try { 
+                const v = await getSetting('tomorrowAudioMode'); 
+                if (v === 'off' || v === 'always' || v === 'hourly' || v === '2h' || v === '3h') { 
+                    select.value = v; 
+                } else { 
+                    select.value = 'hourly'; 
+                } 
+            } catch (e) { 
+                select.value = 'hourly'; 
+            } 
+        })();
+        if (btn) btn.addEventListener('click', async ()=>{ 
+            try { 
+                const val = select.value; 
+                await setSetting('tomorrowAudioMode', val); 
+                if (typeof showToast==='function') showToast('تم حفظ إعدادات التنبيه'); 
+            } catch (e) {} 
+        });
+    })();
+    
     loadOfficeSettings();
     
     document.getElementById('save-office-settings-btn').addEventListener('click', handleSaveOfficeSettings);
@@ -113,6 +174,41 @@ function displaySettingsModal() {
     document.getElementById('restore-file-input').addEventListener('change', handleRestoreData);
     document.getElementById('add-sample-data-btn').addEventListener('click', handleAddSampleData);
     document.getElementById('delete-all-data-btn').addEventListener('click', handleDeleteAllData);
+    (function initAutoBackupToggle() {
+        const autoToggle = document.getElementById('toggle-auto-backup');
+        const track = document.getElementById('auto-backup-track');
+        const knob = document.getElementById('auto-backup-knob');
+        const onLabel = document.getElementById('auto-backup-on');
+        const offLabel = document.getElementById('auto-backup-off');
+        if (!autoToggle) return;
+        const render = (checked) => {
+            if (track) {
+                track.style.background = checked ? 'linear-gradient(90deg, #2563eb, #1d4ed8)' : '#e5e7eb';
+                track.style.borderColor = checked ? '#1d4ed8' : '#cbd5e1';
+                track.style.boxShadow = checked ? 'inset 0 1px 2px rgba(0,0,0,.08), 0 0 0 2px rgba(37, 99, 235, .15)' : 'inset 0 1px 2px rgba(0,0,0,.08)';
+            }
+            if (knob) {
+                knob.style.transform = checked ? 'translateX(28px)' : 'translateX(0)';
+                knob.style.boxShadow = checked ? '0 1px 2px rgba(0,0,0,.2), 0 0 0 3px rgba(147,197,253,.45)' : '0 1px 2px rgba(0,0,0,.2)';
+            }
+            if (onLabel) onLabel.style.display = checked ? 'inline' : 'none';
+            if (offLabel) offLabel.style.display = checked ? 'none' : 'inline';
+        };
+        (async () => {
+            try {
+                const v = await getSetting('autoBackupOnExit');
+                autoToggle.checked = (v === true || v === '1' || v === 1);
+            } catch (e) {}
+            render(autoToggle.checked);
+        })();
+        autoToggle.addEventListener('change', async () => {
+            try {
+                await setSetting('autoBackupOnExit', autoToggle.checked);
+                render(autoToggle.checked);
+                if (typeof showToast==='function') showToast(autoToggle.checked ? 'تم تفعيل النسخ الاحتياطي التلقائي' : 'تم إيقاف النسخ الاحتياطي التلقائي');
+            } catch (e) {}
+        });
+    })();
     const savePwdBtn = document.getElementById('save-password-btn');
     if (savePwdBtn) {
         savePwdBtn.addEventListener('click', async function () {
