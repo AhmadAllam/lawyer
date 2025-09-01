@@ -262,8 +262,19 @@ function getFromIndex(storeName, indexName, query) {
 }
 
 function addClient(clientData) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
         if (!db) return reject("DB not initialized");
+        try {
+            const lic = await getSetting('licensed');
+            const isLicensed = (lic === true || lic === 'true');
+            if (!isLicensed) {
+                const count = await getCount('clients');
+                if (count >= 14) {
+                    try { if (typeof showToast === 'function') showToast('وصلت للحد الأقصى للموكلين (14)، يرجى التفعيل للمتابعة', 'error'); } catch (e) {}
+                    return reject(new Error('ClientLimitReached'));
+                }
+            }
+        } catch (e) {}
         const transaction = db.transaction(['clients'], 'readwrite');
         const objectStore = transaction.objectStore('clients');
         const request = objectStore.add(clientData);

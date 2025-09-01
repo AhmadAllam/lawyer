@@ -259,7 +259,7 @@
         }
     </style>
 </head>
-<body class="min-h-screen flex flex-col bg-slate-100">
+<body class="h-screen overflow-hidden flex flex-col bg-slate-100">
     
     <!-- Header -->
     <header class="fixed top-0 left-0 right-0 z-40 px-2 py-1 bg-blue-900 border-b border-blue-900">
@@ -286,11 +286,11 @@
     </header>
 
     <!-- Main Content -->
-    <main class="flex-1 p-0 mt-10 min-h-[calc(100vh-40px)]">
-        <div class="w-full h-full min-h-[calc(100vh-40px)]">
-            <div class="border-0 bg-white h-full min-h-[calc(100vh-40px)]">
+    <main class="flex-1 p-0" style="padding-top: 48px; height: calc(100vh - 48px); overflow:auto;">
+        <div class="w-full h-full">
+            <div class="border-0 bg-white h-full">
                 <!-- Party Details Form will be inserted here -->
-                <div id="party-form-container" class="p-4 bg-blue-50 border-2 border-blue-300 rounded-xl shadow-md min-h-[calc(100vh-48px)]">
+                <div id="party-form-container" class="p-4 bg-blue-50 border-2 border-blue-300 rounded-xl shadow-md h-full">
                     <!-- Form content will be loaded by JavaScript -->
                 </div>
                 <div id="embedded-content" class="mt-0"></div>

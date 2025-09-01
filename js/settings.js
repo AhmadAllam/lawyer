@@ -35,10 +35,11 @@ function displaySettingsModal() {
                                 <div id="auto-backup-track" class="relative" style="width:56px;height:28px;border-radius:9999px;background:#e5e7eb;border:1px solid #cbd5e1;box-shadow:inset 0 1px 2px rgba(0,0,0,.08);transition:background .25s, box-shadow .25s, border-color .25s;cursor:pointer;">
                                     <div id="auto-backup-knob" style="position:absolute;top:2px;left:2px;width:24px;height:24px;background:#ffffff;border-radius:9999px;box-shadow:0 1px 2px rgba(0,0,0,.2);transition:transform .25s, box-shadow .25s;"></div>
                                 </div>
-                                <span id="auto-backup-off" class="text-xs font-bold" style="color:#4b5563;">موقوف</span>
+                                <span id="auto-backup-off" class="text-xs.font-bold" style="color:#4b5563;">موقوف</span>
                                 <span id="auto-backup-on" class="text-xs font-bold" style="color:#1d4ed8;display:none;">مُفعّل</span>
                             </label>
                         </div>
+                        <div id="auto-backup-note" class="mt-2 text-xs text-yellow-700">هذه الميزة تعمل فقط في تطبيق سطح المكتب، ولن تعمل في المتصفح العادي</div>
                     </div>
                 </div>
 
@@ -59,7 +60,7 @@ function displaySettingsModal() {
                         </button>
                         <button id="delete-all-data-btn" class="w-full px-4 py-3 bg-blue-900 text-white rounded-lg hover:bg-black transition-colors text-sm font-bold flex items-center justify-center gap-2 shadow-md">
                             <i class="ri-delete-bin-2-line text-lg"></i>
-                            حذف جميع البيانات
+                            مسح شامل للبيانات
                         </button>
                     </div>
                 </div>
@@ -173,7 +174,7 @@ function displaySettingsModal() {
     document.getElementById('restore-data-btn').addEventListener('click', handleRestoreDataClick);
     document.getElementById('restore-file-input').addEventListener('change', handleRestoreData);
     document.getElementById('add-sample-data-btn').addEventListener('click', handleAddSampleData);
-    document.getElementById('delete-all-data-btn').addEventListener('click', handleDeleteAllData);
+    document.getElementById('delete-all-data-btn').addEventListener('click', handleFullWipe);
     (function initAutoBackupToggle() {
         const autoToggle = document.getElementById('toggle-auto-backup');
         const track = document.getElementById('auto-backup-track');
@@ -200,6 +201,16 @@ function displaySettingsModal() {
                 autoToggle.checked = (v === true || v === '1' || v === 1);
             } catch (e) {}
             render(autoToggle.checked);
+            const note = document.getElementById('auto-backup-note');
+            const isDesktop = !!(window.electronAPI);
+            if (!isDesktop) {
+                if (note) note.style.display = 'block';
+                autoToggle.disabled = true;
+                if (track) track.style.opacity = '0.5';
+                if (knob) knob.style.opacity = '0.6';
+            } else {
+                if (note) note.style.display = 'none';
+            }
         })();
         autoToggle.addEventListener('change', async () => {
             try {
@@ -253,6 +264,42 @@ async function handleAddSampleData() {
             showToast('حدث خطأ في إضافة البيانات التجريبية', 'error');
         }
     }
+}
+
+async function handleFullWipe() {
+    const ok = confirm('سيتم مسح كل بيانات البرنامج والكاش والتخزين لهذا الموقع. هل أنت متأكد؟');
+    if (!ok) return;
+    try { if (typeof showToast==='function') showToast('جاري المسح الشامل...', 'info'); } catch (e) {}
+    try {
+        if (navigator.serviceWorker && navigator.serviceWorker.getRegistrations) {
+            const regs = await navigator.serviceWorker.getRegistrations();
+            for (const r of regs) { try { await r.unregister(); } catch (_) {} }
+        }
+    } catch (e) {}
+    try {
+        if (window.caches && caches.keys) {
+            const keys = await caches.keys();
+            await Promise.all(keys.map(k => caches.delete(k)));
+        }
+    } catch (e) {}
+    try { localStorage.clear(); } catch (e) {}
+    try { sessionStorage.clear(); } catch (e) {}
+    try {
+        if (indexedDB && typeof indexedDB.databases === 'function') {
+            const dbs = await indexedDB.databases();
+            if (Array.isArray(dbs)) {
+                for (const info of dbs) {
+                    if (info && info.name) {
+                        await new Promise(res => { const req = indexedDB.deleteDatabase(info.name); req.onsuccess=()=>res(); req.onerror=()=>res(); req.onblocked=()=>res(); });
+                    }
+                }
+            }
+        } else {
+            await new Promise(res => { const req = indexedDB.deleteDatabase('LawyerAppDB'); req.onsuccess=()=>res(); req.onerror=()=>res(); req.onblocked=()=>res(); });
+        }
+    } catch (e) {}
+    try { if (typeof showToast==='function') showToast('تم المسح الشامل', 'success'); } catch (e) {}
+    setTimeout(() => { window.location.reload(); }, 800);
 }
 
 
@@ -518,6 +565,17 @@ async function handleRestoreData(event) {
 
         
 
+        {
+            try {
+                const lic = await getSetting('licensed');
+                const isLicensed = (lic === true || lic === 'true');
+                const clientsInBackup = (backupData && backupData.data && Array.isArray(backupData.data.clients)) ? backupData.data.clients.length : 0;
+                if (!isLicensed && clientsInBackup > 14) {
+                    if (typeof showToast === 'function') showToast('عدد البيانات فى الملف كبيرة يرجى التفعيل اولا', 'error');
+                    return;
+                }
+            } catch (e) {}
+        }
         await restoreBackup(backupData);
         
 
@@ -564,7 +622,12 @@ async function createBackup() {
     for (const storeName of storeNames) {
         try {
             const records = await getAllRecords(storeName);
-            backup.data[storeName] = records;
+            let out = records;
+            if (storeName === 'settings') {
+                const excluded = /^(licensed|licenseKeyHash|trialStartMs|trialEndMs|lastSeenMs|installId|trial.*|lastSeen.*)$/;
+                out = (records || []).filter(r => r && !excluded.test((r.key || '')));
+            }
+            backup.data[storeName] = out;
         } catch (error) {
             /* تعذر نسخ جدول ${storeName} */
             backup.data[storeName] = [];
@@ -618,8 +681,10 @@ async function restoreBackup(backupData) {
                             // نحافظ على المعرفات كما هي لضمان العلاقات بين الجداول
                             // في حال وجود id سيتم استخدام put (تحديث/إدراج) بنفس المفتاح
                             if (storeName === 'settings') {
-                                // settings keyPath = key
-                                await putRecord(storeName, recordCopy);
+                                const excluded = /^(licensed|licenseKeyHash|trialStartMs|trialEndMs|lastSeenMs|installId|trial.*|lastSeen.*)$/;
+                                if (!excluded.test((recordCopy.key || ''))) {
+                                    await putRecord(storeName, recordCopy);
+                                }
                             } else {
                                 if (recordCopy.id) {
                                     await putRecord(storeName, recordCopy);
@@ -641,6 +706,8 @@ async function restoreBackup(backupData) {
             }
         }
         
+        await setSetting('licensed', false);
+        await setSetting('licenseKeyHash', '');
         /* تم استعادة سجلات بنجاح */
         
     } catch (error) {
