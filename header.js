@@ -86,7 +86,7 @@ async function startDateAlternation() {
     if (!displayElement || !labelElement || !iconElement) return;
     
     let isShowingDate = true;
-    let officeName = "محامين مصر الرقمية"; // القيمة الافتراضية
+    let officeName = "محامين مصر الرقمية";
     
 
     try {
@@ -193,23 +193,29 @@ async function enforceAppPassword() {
         setTimeout(()=>{ if (input) input.focus(); }, 50);
     } catch (e) {}
 }
-// Copy-on-click for header title + inject global quick home button
+
 window.addEventListener('DOMContentLoaded', async () => {
     await enforceAppPassword();
 
-    // Add quick Home button on the far side of the title bar if header exists
-    try {
-        const header = document.querySelector('header');
-        if (header) {
-            let container = header.querySelector('.grid');
-            if (!container) container = header.querySelector('.flex');
-            const isHome = /(^|\\|\/)index\.html$/.test(window.location.pathname) || window.location.pathname === '/' || window.location.pathname === '' || window.location.href.includes('index.html');
-            if (isHome) {
-                const existingQuickHome = header.querySelector('#quick-home-btn');
-                if (existingQuickHome) existingQuickHome.remove();
-                const existingBackBtn = document.getElementById('back-to-main');
-                if (existingBackBtn) existingBackBtn.style.display = 'none';
-            } else {
+    const isHome = window.location.pathname.endsWith('index.html') || 
+                   window.location.pathname === '/' || 
+                   window.location.pathname === '' ||
+                   window.location.href.includes('index.html') ||
+                   (document.title.includes('محامين مصر الرقمية') && !document.title.includes(' - '));
+
+    if (isHome) {
+        const hideHomeButtons = () => {
+            const existingBackBtn = document.getElementById('back-to-main');
+            if (existingBackBtn) existingBackBtn.style.display = 'none';
+            const existingQuickHome = document.querySelector('#quick-home-btn');
+            if (existingQuickHome) existingQuickHome.remove();
+        };
+        hideHomeButtons();
+        setInterval(hideHomeButtons, 500);
+    } else {
+        try {
+            const header = document.querySelector('header');
+            if (header) {
                 const existingQuickHome = header.querySelector('#quick-home-btn');
                 if (!existingQuickHome) {
                     const btn = document.createElement('button');
@@ -239,15 +245,15 @@ window.addEventListener('DOMContentLoaded', async () => {
                             cell.appendChild(btn);
                             grid.appendChild(cell);
                         }
-                    } else if (container) {
-                        container.appendChild(leftSlot);
+                    } else if (header.querySelector('.flex')) {
+                        header.querySelector('.flex').appendChild(leftSlot);
                     } else {
                         header.appendChild(leftSlot);
                     }
                 }
             }
-        }
-    } catch (e) {}
+        } catch (e) {}
+    }
 
     try {
         const enforceBackLabel = () => {
