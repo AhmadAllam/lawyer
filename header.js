@@ -203,15 +203,40 @@ window.addEventListener('DOMContentLoaded', async () => {
                    window.location.href.includes('index.html') ||
                    (document.title.includes('محامين مصر الرقمية') && !document.title.includes(' - '));
 
+    const hideHomeButtons = () => {
+        const existingBackBtn = document.getElementById('back-to-main');
+        if (existingBackBtn) {
+            existingBackBtn.style.display = 'none';
+            existingBackBtn.remove();
+        }
+        const existingQuickHome = document.querySelector('#quick-home-btn');
+        if (existingQuickHome) existingQuickHome.remove();
+        
+        const header = document.querySelector('header');
+        if (header) {
+            const grid = header.querySelector('.grid');
+            if (grid) {
+                const homeButtons = grid.querySelectorAll('button[id*="home"], button[id*="back"], .justify-self-end');
+                homeButtons.forEach(btn => {
+                    if (btn.textContent.includes('الرئيسيه') || btn.textContent.includes('رجوع')) {
+                        btn.remove();
+                    }
+                });
+            }
+        }
+    };
+
     if (isHome) {
-        const hideHomeButtons = () => {
-            const existingBackBtn = document.getElementById('back-to-main');
-            if (existingBackBtn) existingBackBtn.style.display = 'none';
-            const existingQuickHome = document.querySelector('#quick-home-btn');
-            if (existingQuickHome) existingQuickHome.remove();
-        };
         hideHomeButtons();
-        setInterval(hideHomeButtons, 500);
+        setInterval(hideHomeButtons, 200);
+        
+        const observer = new MutationObserver(() => {
+            if (isHome) hideHomeButtons();
+        });
+        const header = document.querySelector('header');
+        if (header) {
+            observer.observe(header, { childList: true, subtree: true });
+        }
     } else {
         try {
             const header = document.querySelector('header');
