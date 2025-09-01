@@ -636,8 +636,19 @@ function displayClientEmbedded(clientId) {
     if (card) {
         card.classList.remove('p-6', 'h-[75vh]');
         card.classList.add('p-0');
+        card.classList.remove('overflow-hidden');
+        card.style.overflowY = 'auto';
+        card.style.height = 'auto';
         card.style.minHeight = 'calc(100vh - 56px)';
     }
+    const mainEl = document.querySelector('main');
+    if (mainEl) { mainEl.style.overflowY = 'auto'; mainEl.style.height = 'auto'; }
+    try {
+        document.documentElement.style.overflowY = 'auto';
+        document.body.style.overflowY = 'auto';
+        root.style.overflowY = 'auto';
+        root.style.height = 'auto';
+    } catch (e) {}
 
     // أعد تسمية عناصر المودال الأصلية لتجنب تضارب المعرفات
     const origTitleEl = document.querySelector('#modal #modal-title');
